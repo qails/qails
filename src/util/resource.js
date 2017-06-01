@@ -334,7 +334,7 @@ export default class ResourceRouter extends Router {
             .fetch({ required: true })
         ).first();
         if (ctx.state.resource) {
-          await ctx.state.resource.save(attributes, {
+          const updatedResource = await ctx.state.resource.save(attributes, {
             method: 'update',
             patch: true
           });
@@ -342,7 +342,7 @@ export default class ResourceRouter extends Router {
           ctx.body = envelope({
             code: 0,
             message: 'Success',
-            result: ctx.state.resource
+            result: updatedResource
           });
           ctx.status = 202;
         } else {
