@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   virtuals: false,
   visibility: false,
   pagination: true,
@@ -7,4 +7,4 @@ module.exports = {
   uuid: false,
   jsonColumns: true,
   magicCase: true
-}
+};

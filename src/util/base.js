@@ -1,3 +1,4 @@
+import { existsSync } from 'fs';
 import { resolve } from 'path';
 import knex from 'knex';
 import bookshelf from 'bookshelf';
@@ -7,32 +8,21 @@ import mask from 'bookshelf-mask';
 import uuid from 'bookshelf-uuid';
 import jsonColumns from 'bookshelf-json-columns';
 import magicCase from './magic-case';
-// import knexfile from '../config/knexfile';
 
-const qailsrcPath = resolve(process.cwd(), 'test/.qailsrc');
+const { DOCUMENT_ROOT = 'src' } = process.env;
+
+let qailsrcPath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/qailsrc');
+if (!existsSync(qailsrcPath)) {
+  qailsrcPath = resolve(__dirname, '../qailsrc');
+}
+let knexfilePath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/knexfile');
+if (!existsSync(knexfilePath)) {
+  knexfilePath = resolve(__dirname, '../knexfile');
+}
 // eslint-disable-next-line
 const qailsrc = require(qailsrcPath);
-
-const {
-  MYSQL_HOST,
-  MYSQL_USER,
-  MYSQL_PASSWORD,
-  MYSQL_DATABASE,
-  MYSQL_PORT
-} = process.env;
-
-const knexfile = {
-  client: 'mysql',
-  connection: {
-    host: MYSQL_HOST || 'localhost',
-    user: MYSQL_USER || 'root',
-    password: MYSQL_PASSWORD || '',
-    database: MYSQL_DATABASE || 'qrmaps',
-    port: MYSQL_PORT || 3306,
-    charset: 'utf8',
-    timezone: 'UTC'
-  }
-};
+// eslint-disable-next-line
+const knexfile = require(knexfilePath);
 
 const base = bookshelf(knex(knexfile));
 
