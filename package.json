@@ -1,9 +1,15 @@
 {
   "name": "qails",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "zhongzhi107/qails",
   "main": "dist/index.js",
+  "bin": {
+    "babel": "./node_modules/.bin/babel",
+    "babel-node": "./node_modules/.bin/babel-node",
+    "eslint": "./node_modules/.bin/eslint",
+    "knex": "./node_modules/.bin/knex"
+  },
   "files": [
     "dist"
   ],
