@@ -4,7 +4,7 @@ import compose from 'koa-compose';
 import Collection from 'bookshelf/lib/collection';
 import { defaults, isFunction, compact, chunk, startsWith } from 'lodash';
 import { snake } from './magic-case';
-
+import envelope from './response-envelope';
 /**
  * @class
  */
@@ -88,11 +88,11 @@ export default class ResourceRouter extends Router {
         }
         await next();
         ctx.status = 201;
-        ctx.body = {
+        ctx.body = envelope({
           code: 0,
           message: 'Success',
           result: ctx.state.resource
-        };
+        });
       };
       options = middlewave;
     }
@@ -247,11 +247,11 @@ export default class ResourceRouter extends Router {
       await next();
 
       ctx.status = 200;
-      ctx.body = {
+      ctx.body = envelope({
         code: 0,
         message: 'Success',
         result
-      };
+      });
     };
 
     const itemMiddleware = async (ctx, next) => {
@@ -268,17 +268,17 @@ export default class ResourceRouter extends Router {
       if (item) {
         ctx.state.resource = mask ? item.mask(mask) : item.toJSON();
         await next();
-        ctx.body = {
+        ctx.body = envelope({
           code: 0,
           message: 'Success',
           result: ctx.state.resource
-        };
+        });
         ctx.status = 200;
       } else {
-        ctx.body = {
+        ctx.body = envelope({
           code: 404,
           message: 'Not found'
-        };
+        });
       }
     };
 
@@ -339,17 +339,17 @@ export default class ResourceRouter extends Router {
             patch: true
           });
           await next();
-          ctx.body = {
+          ctx.body = envelope({
             code: 0,
             message: 'Success',
             result: ctx.state.resource
-          };
+          });
           ctx.status = 202;
         } else {
-          ctx.body = {
+          ctx.body = envelope({
             code: 404,
             message: 'Not found'
-          };
+          });
         }
       };
       options = middlewave;
@@ -389,16 +389,16 @@ export default class ResourceRouter extends Router {
           ctx.state.deleted = ctx.state.resource.toJSON();
           await ctx.state.resource.destroy();
           await next();
-          ctx.body = {
+          ctx.body = envelope({
             code: 0,
             message: 'Success'
-          };
+          });
           /* ctx.status = 204; */
         } else {
-          ctx.body = {
+          ctx.body = envelope({
             code: 404,
             message: 'Not found'
-          };
+          });
         }
       };
       options = middlewave;

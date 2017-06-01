@@ -1,10 +1,11 @@
-export default {
-  virtuals: false,
-  visibility: false,
+module.exports = {
+  virtuals: true,
+  visibility: true,
   pagination: true,
   cascadeDelete: true,
   mask: true,
-  uuid: false,
+  uuid: true,
   jsonColumns: true,
-  magicCase: true
+  magicCase: true,
+  envelope: false
 };

@@ -11,13 +11,13 @@ import magicCase from './magic-case';
 
 const { DOCUMENT_ROOT = 'src' } = process.env;
 
-let qailsrcPath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/qailsrc');
+let qailsrcPath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/qailsrc.js');
 if (!existsSync(qailsrcPath)) {
-  qailsrcPath = resolve(__dirname, '../qailsrc');
+  qailsrcPath = resolve(__dirname, '../qailsrc.js');
 }
-let knexfilePath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/knexfile');
+let knexfilePath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/knexfile.js');
 if (!existsSync(knexfilePath)) {
-  knexfilePath = resolve(__dirname, '../knexfile');
+  knexfilePath = resolve(__dirname, '../knexfile.js');
 }
 // eslint-disable-next-line
 const qailsrc = require(qailsrcPath);

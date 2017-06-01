@@ -1,14 +1,14 @@
 import { hostname } from 'os';
 import SDC from 'statsd-client';
 
-const sdc = new SDC({
-  host: '',
-  port: '',
-  prefix: ''
-});
-
+const { WATCHER_ENABLE, WATCHER_HOST, WATCHER_PORT, WATCHER_PREFIX } = process.env;
 const name = hostname().split('.')[0] || 'default';
-const { WATCHER_ENABLE } = process.env;
+
+const sdc = new SDC({
+  host: WATCHER_HOST,
+  port: WATCHER_PORT,
+  prefix: WATCHER_PREFIX
+});
 
 export const increment = (key, count) => {
   if (WATCHER_ENABLE === 'true') {
