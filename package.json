@@ -1,16 +1,18 @@
 {
   "name": "qails",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "zhongzhi107/qails",
   "main": "dist/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "license": "MIT",
   "scripts": {
     "build": "babel src -d dist",
     "start": "pm2 start ecosystem.config.js",
     "lint": "eslint --quiet \"**/*.js\"",
-    "release": "standard-version --first-release",
+    "release": "standard-version",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
     "test": "babel-node ./test/index.js"
