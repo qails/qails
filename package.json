@@ -21,7 +21,7 @@
     "release": "standard-version",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
-    "test": "babel-node ./test/index.js"
+    "test": "mocha --recursive --compilers js:babel-core/register ./test/index.js"
   },
   "dependencies": {
     "babel-cli": "^6.24.1",
@@ -62,6 +62,7 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "mocha": "^3.4.2",
     "supertest": "^3.0.0"
   }
 }
