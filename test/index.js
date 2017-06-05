@@ -1,8 +1,10 @@
 import { join } from 'path';
 import request from 'supertest';
-import { app, setupRoutes } from '..';
+import { Qails } from '../src';
 
-setupRoutes(app, join(__dirname, 'routes'));
+const app = new Qails({
+  routeDir: join(__dirname, 'routes')
+});
 
 app.listen(4000, (err) => {
   if (err) {
@@ -12,11 +14,13 @@ app.listen(4000, (err) => {
   console.log('✅ koa listening on port 4000');
 });
 
-request(app)
+request(app.server)
   .get('/')
-  .expect('Content-Type', /json/)
-  .expect('Content-Length', '15')
+  // .expect('Content-Type', /json/)
+  // .expect('Content-Length', '15')
   .expect(200)
+  .expect('Content-Type', 'text/plain')
   .end((err, res) => {
     if (err) throw err;
+    console.log(res);
   });
