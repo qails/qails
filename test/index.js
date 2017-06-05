@@ -3,7 +3,7 @@ import request from 'supertest';
 import { Qails } from '../src';
 
 const app = new Qails({
-  routeDir: join(__dirname, 'routes')
+  routePath: join(__dirname, 'routes')
 });
 
 app.listen(4000, (err) => {
