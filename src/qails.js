@@ -47,7 +47,9 @@ export default class Qails {
     this.use(morgan('combined', { stream: accessLogStream }));
     this.use(bodyParser());
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
-    setupRoutes(this.koa, options.routeDir);
+    if (options.routePath) {
+      setupRoutes(this.koa, options.routePath);
+    }
     this.server = null;
   }
 
