@@ -4,6 +4,7 @@ import json from 'koa-json';
 import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
 import morgan from 'koa-morgan';
+import serve from 'koa-static';
 import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
@@ -23,28 +24,11 @@ const accessLogStream = FileStreamRotator.getStream({
   verbose: false
 });
 
-// const app = new Koa();
-// qs(app);
-// app.use(morgan('combined', { stream: accessLogStream }));
-// app.use(bodyParser());
-// app.use(json({ pretty: JSON_PRETTY === 'true' }));
-
-// app.start = () => {
-//   app.listen(PORT, (err) => {
-//     if (err) {
-//       throw err;
-//     }
-//
-//     console.log('✅ qails listening on port %s', PORT);
-//   });
-// };
-
-// export default app;
-
 export default class Qails {
   constructor(options) {
     this.koa = qs(new Koa());
     this.use(morgan('combined', { stream: accessLogStream }));
+    this.use(serve(options.staticPath || join(cwd, 'static')));
     this.use(bodyParser());
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
     if (options.routePath) {

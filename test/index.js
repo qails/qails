@@ -11,7 +11,7 @@ app.listen(4000, (err) => {
     throw err;
   }
 
-  console.log('✅ koa listening on port 4000');
+  console.log('✅ qails listening on port 4000');
 });
 
 request(app.server)
