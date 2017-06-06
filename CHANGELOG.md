@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/zhongzhi107/qails/compare/v1.0.7...v1.1.0) (2017-06-06)
+
+
+### Features
+
+* Support static files ([e24ab19](https://github.com/zhongzhi107/qails/commit/e24ab19))
+
+
+
 <a name="1.0.7"></a>
 ## [1.0.7](https://github.com/zhongzhi107/qails/compare/v1.0.6...v1.0.7) (2017-06-05)
 
