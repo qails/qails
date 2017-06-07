@@ -2,7 +2,7 @@
   "name": "qails",
   "version": "1.1.0",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
-  "repository": "zhongzhi107/qails",
+  "repository": "qailsjs/qails",
   "main": "dist/index.js",
   "bin": {
     "babel": "./node_modules/.bin/babel",
