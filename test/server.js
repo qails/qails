@@ -1,5 +1,21 @@
 import { join } from 'path';
-import { app, setupRoutes } from '..';
+import { Qails } from '../src';
 
-setupRoutes(app, join(__dirname, 'routes'));
-app.start();
+const app = new Qails({
+  routePath: join(__dirname, 'routes'),
+  corsConfig: {
+    enable: true,
+    origin: 'http://touch.qunar.com,https://touch.qunar.com',
+    allowMethods: ['GET']
+  }
+});
+
+app.listen(4000, (err) => {
+  if (err) {
+    throw err;
+  }
+
+  console.log('✅ qails listening on port 4000');
+});
+
+export default app;

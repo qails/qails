@@ -5,6 +5,7 @@ import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
 import morgan from 'koa-morgan';
 import serve from 'koa-static';
+import cors from 'koa2-cors';
 import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
@@ -26,13 +27,32 @@ const accessLogStream = FileStreamRotator.getStream({
 
 export default class Qails {
   constructor(options) {
+    const { staticPath, corsConfig, routePath } = options || {};
+
     this.koa = qs(new Koa());
     this.use(morgan('combined', { stream: accessLogStream }));
-    this.use(serve(options.staticPath || join(cwd, 'static')));
+    this.use(serve(staticPath || join(cwd, 'static')));
+    if (cors) {
+      const { enable, ...corsOptions } = corsConfig;
+      if (enable) {
+        const { origin } = corsOptions;
+        // 允许一个或多个指定某域名能访问
+        if (origin && origin !== '*') {
+          corsOptions.origin = (ctx) => {
+            const headerOrigin = ctx.request.header.origin;
+            if (origin.split(',').indexOf(headerOrigin) > -1) {
+              return headerOrigin;
+            }
+            return false;
+          };
+        }
+        this.use(cors(corsOptions));
+      }
+    }
     this.use(bodyParser());
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
-    if (options.routePath) {
-      setupRoutes(this.koa, options.routePath);
+    if (routePath) {
+      setupRoutes(this.koa, routePath);
     }
     this.server = null;
   }
