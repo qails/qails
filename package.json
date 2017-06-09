@@ -1,6 +1,6 @@
 {
   "name": "qails",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "qailsjs/qails",
   "main": "dist/index.js",
@@ -52,6 +52,7 @@
     "koa-router": "^7.1.1",
     "koa-session": "^5.0.0",
     "koa-static": "^3.0.0",
+    "koa2-cors": "^2.0.3",
     "lodash": "^4.17.4",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
