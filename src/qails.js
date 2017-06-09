@@ -40,10 +40,8 @@ export default class Qails {
         if (origin && origin !== '*') {
           corsOptions.origin = (ctx) => {
             const headerOrigin = ctx.request.header.origin;
-            if (origin.split(',').indexOf(headerOrigin) > -1) {
-              return headerOrigin;
-            }
-            return false;
+            const isValidate = origin.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
+            return isValidate ? headerOrigin : false;
           };
         }
         this.use(cors(corsOptions));

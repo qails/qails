@@ -5,7 +5,7 @@ const app = new Qails({
   routePath: join(__dirname, 'routes'),
   corsConfig: {
     enable: true,
-    origin: 'http://touch.qunar.com,https://touch.qunar.com',
+    origin: '*',
     allowMethods: ['GET']
   }
 });
