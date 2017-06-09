@@ -19,13 +19,13 @@ app.listen(4000, (err) => {
   console.log('✅ qails listening on port 4000');
 });
 
-// request(app.server)
-//   .get('/')
-//   // .expect('Content-Type', /json/)
-//   // .expect('Content-Length', '15')
-//   .expect(200)
-//   .expect('Content-Type', 'text/plain')
-//   .end((err, res) => {
-//     if (err) throw err;
-//     console.log(res);
-//   });
+request(app.server)
+  .get('/a')
+  // .expect('Content-Type', /json/)
+  // .expect('Content-Length', '15')
+  .expect(200)
+  .expect('Content-Type', 'text/plain')
+  .end((err, res) => {
+    if (err) throw err;
+    console.log(res);
+  });

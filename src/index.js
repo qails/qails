@@ -1,5 +1,5 @@
 // eslint-disable-next-line
-require('dotenv').config();
+// require('dotenv').config();
 
 export { default as Qails } from './qails';
 // export { default as setupRoutes } from './util/setup-routes';

@@ -1,8 +1,8 @@
 import Router from 'koa-router';
 
 const router = new Router();
-router.get('/', async (ctx) => {
-  ctx.body = 'Hello world';
+router.get('/pug', async (ctx) => {
+  ctx.render('index');
 });
 
 export default router;

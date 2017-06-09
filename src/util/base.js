@@ -1,5 +1,3 @@
-import { existsSync } from 'fs';
-import { resolve } from 'path';
 import knex from 'knex';
 import bookshelf from 'bookshelf';
 import modelBase from 'bookshelf-modelbase';
@@ -9,30 +7,41 @@ import uuid from 'bookshelf-uuid';
 import jsonColumns from 'bookshelf-json-columns';
 import magicCase from './magic-case';
 
-const { DOCUMENT_ROOT = 'src' } = process.env;
+const {
+  KNEX_CLIENT = 'mysql',
+  MYSQL_HOST = 'localhost',
+  MYSQL_USER = 'root',
+  MYSQL_PASSWORD = '',
+  MYSQL_DATABASE = 'test',
+  MYSQL_PORT = '3306',
+  MODEL_VIRTUALS = 'true',
+  MODEL_VISIBILITY = 'true',
+  MODEL_PAGINATION = 'true',
+  MODEL_CASCADEDELETE = 'true',
+  MODEL_MASK = 'true',
+  MODEL_UUID = 'true',
+  MODEL_JSONCOLUMNS = 'true',
+  MODEL_MAGICCASE = 'true'
+} = process.env;
 
-let qailsrcPath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/qailsrc.js');
-if (!existsSync(qailsrcPath)) {
-  qailsrcPath = resolve(__dirname, '../qailsrc.js');
-}
-let knexfilePath = resolve(process.cwd(), DOCUMENT_ROOT, 'config/knexfile.js');
-if (!existsSync(knexfilePath)) {
-  knexfilePath = resolve(__dirname, '../knexfile.js');
-}
-// eslint-disable-next-line
-const qailsrc = require(qailsrcPath);
-// eslint-disable-next-line
-const knexfile = require(knexfilePath);
-
-const base = bookshelf(knex(knexfile));
+const base = bookshelf(knex({
+  client: KNEX_CLIENT,
+  connection: {
+    host: MYSQL_HOST,
+    user: MYSQL_USER,
+    password: MYSQL_PASSWORD,
+    database: MYSQL_DATABASE,
+    port: MYSQL_PORT
+  }
+}));
 
 // 让 Model 具有返回虚拟字段的功能
-if (qailsrc.virtuals) {
+if (MODEL_VIRTUALS === 'true') {
   base.plugin('virtuals');
 }
 
 // 让 Model 调用 toJSON 方法时具有显示／隐藏某些字段的功能
-if (qailsrc.visibility) {
+if (MODEL_VISIBILITY === 'true') {
   base.plugin('visibility');
 }
 
@@ -40,32 +49,32 @@ if (qailsrc.visibility) {
 base.plugin(modelBase.pluggable);
 
 // 让 Model 具有分页功能
-if (qailsrc.pagination) {
+if (MODEL_PAGINATION === 'true') {
   base.plugin('pagination');
 }
 
 // 让 Model 具有删除关联数据功能
-if (qailsrc.cascadeDelete) {
+if (MODEL_CASCADEDELETE === 'true') {
   base.plugin(cascadeDelete);
 }
 
 // 让 Model 具有返回自定义字段的功能
-if (qailsrc.mask) {
+if (MODEL_MASK === 'true') {
   base.plugin(mask);
 }
 
 // 让 Model 具有自动生成UUID的功能
-if (qailsrc.uuid) {
+if (MODEL_UUID === 'true') {
   base.plugin(uuid);
 }
 
 // 让 Model 具有自动存储序列化对象的能力
-if (qailsrc.jsonColumns) {
+if (MODEL_JSONCOLUMNS === 'true') {
   base.plugin(jsonColumns);
 }
 
 // 让 Model 具有自动转换对象 key 拼写的能力
-if (qailsrc.magicCase) {
+if (MODEL_MAGICCASE === 'true') {
   base.plugin(magicCase);
 }
 

@@ -6,12 +6,22 @@ import qs from 'koa-qs';
 import morgan from 'koa-morgan';
 import serve from 'koa-static';
 import cors from 'koa2-cors';
+import Pug from 'koa-pug';
 import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
 
 const cwd = process.cwd();
-const { JSON_PRETTY } = process.env;
+const {
+  DOCUMENT_ROOT,
+  JSON_PRETTY,
+  PUG_ENABLE,
+  PUG_PAGES_PATH,
+  STATIC_ROOT,
+  CORS_ENABLE,
+  CORS_ORIGIN,
+  CORS_ALLOW_METHODS
+ } = process.env;
 
 // 创建日志目录
 const logDir = join(cwd, 'logs');
@@ -26,32 +36,35 @@ const accessLogStream = FileStreamRotator.getStream({
 });
 
 export default class Qails {
-  constructor(options) {
-    const { staticPath, corsConfig, routePath } = options || {};
-
+  constructor() {
     this.koa = qs(new Koa());
     this.use(morgan('combined', { stream: accessLogStream }));
-    this.use(serve(staticPath || join(cwd, 'static')));
-    if (cors) {
-      const { enable, ...corsOptions } = corsConfig;
-      if (enable) {
-        const { origin } = corsOptions;
-        // 允许一个或多个指定某域名能访问
-        if (origin && origin !== '*') {
-          corsOptions.origin = (ctx) => {
-            const headerOrigin = ctx.request.header.origin;
-            const isValidate = origin.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
-            return isValidate ? headerOrigin : false;
-          };
-        }
-        this.use(cors(corsOptions));
+    this.use(serve(join(cwd, STATIC_ROOT || 'static')));
+    if (CORS_ENABLE) {
+      const corsOptions = {
+        origin: CORS_ORIGIN,
+        allowMethods: CORS_ALLOW_METHODS.split(',')
+      };
+      // 允许一个或多个指定某域名能访问
+      if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
+        corsOptions.origin = (ctx) => {
+          const headerOrigin = ctx.request.header.origin;
+          const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
+          return isValidate ? headerOrigin : false;
+        };
       }
+      this.use(cors(corsOptions));
     }
     this.use(bodyParser());
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
-    if (routePath) {
-      setupRoutes(this.koa, routePath);
+
+    if (PUG_ENABLE === 'true') {
+      const pug = new Pug({ viewPath: join(cwd, PUG_PAGES_PATH) });
+      pug.use(this.koa);
     }
+
+    setupRoutes(this.koa, join(cwd, DOCUMENT_ROOT, 'routes'));
+
     this.server = null;
   }
 
