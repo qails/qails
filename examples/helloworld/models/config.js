@@ -1,4 +1,4 @@
-import { Model } from '../..';
+import { Model } from '../../..';
 
 /**
  * @class Config

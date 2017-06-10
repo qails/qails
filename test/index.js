@@ -1,31 +1,12 @@
-import { join } from 'path';
 import request from 'supertest';
-import { Qails } from '../src';
+import app from '../examples/helloworld';
 
-const app = new Qails({
-  routePath: join(__dirname, 'routes'),
-  corsConfig: {
-    enable: false,
-    origin: '*',
-    allowMethods: ['GET']
-  }
-});
-
-app.listen(4000, (err) => {
-  if (err) {
-    throw err;
-  }
-
-  console.log('✅ qails listening on port 4000');
-});
-
-request(app.server)
-  .get('/a')
-  // .expect('Content-Type', /json/)
-  // .expect('Content-Length', '15')
-  .expect(200)
-  .expect('Content-Type', 'text/plain')
-  .end((err, res) => {
-    if (err) throw err;
-    console.log(res);
+describe('GET /configs', () => {
+  it('respond with json', (done) => {
+    request(app.server)
+      .get('/configs')
+      .set('Accept', 'application/json')
+      // .set('Accept', 'application/json')
+      .expect(200, done);
   });
+});

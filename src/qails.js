@@ -14,6 +14,7 @@ import setupRoutes from './util/setup-routes';
 const cwd = process.cwd();
 const {
   DOCUMENT_ROOT,
+  LOG_ROOT,
   JSON_PRETTY,
   PUG_ENABLE,
   PUG_PAGES_PATH,
@@ -24,7 +25,7 @@ const {
  } = process.env;
 
 // 创建日志目录
-const logDir = join(cwd, 'logs');
+const logDir = join(cwd, LOG_ROOT);
 mkdirp.sync(logDir);
 
 // create a rotating write stream

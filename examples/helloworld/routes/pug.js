@@ -1,6 +1,5 @@
-import Router from 'koa-router';
+import { router } from '../../..';
 
-const router = new Router();
 router.get('/pug', async (ctx) => {
   ctx.render('index');
 });
