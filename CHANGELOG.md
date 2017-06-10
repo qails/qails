@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.4.0"></a>
+# [1.4.0](https://github.com/qailsjs/qails/compare/v1.3.0...v1.4.0) (2017-06-10)
+
+
+### Features
+
+* 将koa-router封装到qails，能简化编程代码量 ([f997915](https://github.com/qailsjs/qails/commit/f997915))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/qailsjs/qails/compare/v1.2.1...v1.3.0) (2017-06-09)
 
