@@ -423,4 +423,27 @@ export default class ResourceRouter extends Router {
   crud() {
     return this.create().read().update().destroy();
   }
+
+  /**
+   * Nest router
+   */
+  // children(...children) {
+  //   const { pattern } = this;
+  //   this.use(
+  //     `${pattern}/:${this.foreignId}(${this.idType})`,
+  //     async (ctx, next) => {
+  //       ctx.state.nested = ctx.state.nested || {};
+  //       ctx.state.nested[this.name] = await this.collection(ctx).query(q =>
+  //         q.where({ [this.idAttribute]: ctx.params[this.foreignId] })
+  //       ).fetchOne({ require: true });
+  //       await next();
+  //     },
+  //     ...children.map( Child => Child instanceof Base
+  //       ? Child.routes()
+  //       : Child.prototype instanceof Base
+  //         ? new Child().routes()
+  //         : Child)
+  //   )
+  //   return this;
+  // }
 }

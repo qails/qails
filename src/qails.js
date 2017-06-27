@@ -7,6 +7,8 @@ import morgan from 'koa-morgan';
 import serve from 'koa-static';
 import cors from 'koa2-cors';
 import Pug from 'koa-pug';
+import cookie from 'koa-cookie';
+import session from 'koa-session';
 import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
@@ -21,7 +23,9 @@ const {
   STATIC_ROOT,
   CORS_ENABLE,
   CORS_ORIGIN,
-  CORS_ALLOW_METHODS
+  CORS_ALLOW_METHODS,
+  COOKIE_ENABLE,
+  SESSION_ENABLE
  } = process.env;
 
 // 创建日志目录
@@ -55,6 +59,12 @@ export default class Qails {
         };
       }
       this.use(cors(corsOptions));
+    }
+    if (COOKIE_ENABLE) {
+      this.use(cookie());
+    }
+    if (SESSION_ENABLE) {
+      this.use(session({}, this.koa));
     }
     this.use(bodyParser());
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
