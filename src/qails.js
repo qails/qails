@@ -88,7 +88,7 @@ export default class Qails {
           setupRoutes(this.koa, join(cwd, DOCUMENT_ROOT, 'routes'));
           break;
         default:
-          this.use(mw());
+          this.use(mw);
       }
     });
 
