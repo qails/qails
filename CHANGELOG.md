@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.5.1"></a>
+## [1.5.1](https://github.com/qailsjs/qails/compare/v1.5.0...v1.5.1) (2017-07-04)
+
+
+### Bug Fixes
+
+* middleware must be a function! ([c210844](https://github.com/qailsjs/qails/commit/c210844))
+
+
+
 <a name="1.5.0"></a>
 # [1.5.0](https://github.com/qailsjs/qails/compare/v1.4.1...v1.5.0) (2017-07-04)
 
