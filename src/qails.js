@@ -1,5 +1,6 @@
 import { join } from 'path';
 import Koa from 'koa';
+// import convert from 'koa-convert';
 import json from 'koa-json';
 import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
@@ -7,7 +8,6 @@ import morgan from 'koa-morgan';
 import serve from 'koa-static';
 import cors from 'koa2-cors';
 import Pug from 'koa-pug';
-import cookie from 'koa-cookie';
 import session from 'koa-session';
 import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
@@ -18,14 +18,10 @@ const {
   DOCUMENT_ROOT,
   LOG_ROOT,
   JSON_PRETTY,
-  PUG_ENABLE,
   PUG_PAGES_PATH,
   STATIC_ROOT,
-  CORS_ENABLE,
   CORS_ORIGIN,
-  CORS_ALLOW_METHODS,
-  COOKIE_ENABLE,
-  SESSION_ENABLE
+  CORS_ALLOW_METHODS
  } = process.env;
 
 // 创建日志目录
@@ -41,40 +37,60 @@ const accessLogStream = FileStreamRotator.getStream({
 });
 
 export default class Qails {
-  constructor() {
+  constructor(options) {
+    const { middlewaves } = options || {
+      middlewaves: [
+        'static',
+        'cors',
+        'session',
+        'body',
+        'json',
+        'pug',
+        'routes'
+      ]
+    };
+    const corsOptions = {
+      origin: CORS_ORIGIN,
+      allowMethods: CORS_ALLOW_METHODS.split(',')
+    };
+
     this.koa = qs(new Koa());
     this.use(morgan('combined', { stream: accessLogStream }));
-    this.use(serve(join(cwd, STATIC_ROOT || 'static')));
-    if (CORS_ENABLE) {
-      const corsOptions = {
-        origin: CORS_ORIGIN,
-        allowMethods: CORS_ALLOW_METHODS.split(',')
-      };
-      // 允许一个或多个指定某域名能访问
-      if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
-        corsOptions.origin = (ctx) => {
-          const headerOrigin = ctx.request.header.origin;
-          const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
-          return isValidate ? headerOrigin : false;
-        };
+    middlewaves.forEach((mw) => {
+      switch (mw) {
+        case 'static':
+          this.use(serve(join(cwd, STATIC_ROOT || 'static')));
+          break;
+        case 'cors':
+          // 允许一个或多个指定某域名能访问
+          if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
+            corsOptions.origin = (ctx) => {
+              const headerOrigin = ctx.request.header.origin;
+              const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
+              return isValidate ? headerOrigin : false;
+            };
+          }
+          this.use(cors(corsOptions));
+          break;
+        case 'session':
+          this.use(session({}, this.koa));
+          break;
+        case 'body':
+          this.use(bodyParser());
+          break;
+        case 'json':
+          this.use(json({ pretty: JSON_PRETTY === 'true' }));
+          break;
+        case 'pug':
+          (new Pug({ viewPath: join(cwd, PUG_PAGES_PATH) })).use(this.koa);
+          break;
+        case 'routes':
+          setupRoutes(this.koa, join(cwd, DOCUMENT_ROOT, 'routes'));
+          break;
+        default:
+          this.use(mw());
       }
-      this.use(cors(corsOptions));
-    }
-    if (COOKIE_ENABLE) {
-      this.use(cookie());
-    }
-    if (SESSION_ENABLE) {
-      this.use(session({}, this.koa));
-    }
-    this.use(bodyParser());
-    this.use(json({ pretty: JSON_PRETTY === 'true' }));
-
-    if (PUG_ENABLE === 'true') {
-      const pug = new Pug({ viewPath: join(cwd, PUG_PAGES_PATH) });
-      pug.use(this.koa);
-    }
-
-    setupRoutes(this.koa, join(cwd, DOCUMENT_ROOT, 'routes'));
+    });
 
     this.server = null;
   }
