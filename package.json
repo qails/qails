@@ -18,7 +18,7 @@
     "build": "babel src -d dist",
     "start": "pm2 start ecosystem.config.js",
     "lint": "eslint --quiet \"**/*.js\"",
-    "release": "standard-version",
+    "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
     "test": "mocha --recursive --compilers js:babel-core/register ./test/index.js",
