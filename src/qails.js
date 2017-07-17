@@ -13,6 +13,16 @@ import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
 
+function parseMiddleWaveParams(middlewave) {
+  return Array.isArray(middlewave) ? {
+    middlewaveName: middlewave[0],
+    middlewaveOptions: middlewave[1]
+  } : {
+    middlewaveName: middlewave,
+    middlewaveOptions: null
+  };
+}
+
 const cwd = process.cwd();
 const {
   DOCUMENT_ROOT,
@@ -49,43 +59,58 @@ export default class Qails {
         'routes'
       ]
     };
-    const corsOptions = {
-      origin: CORS_ORIGIN,
-      allowMethods: CORS_ALLOW_METHODS.split(',')
-    };
 
     this.koa = qs(new Koa());
     this.use(morgan('combined', { stream: accessLogStream }));
+    // eslint-disable-next-line
     middlewaves.forEach((mw) => {
-      switch (mw) {
+      let {
+        // eslint-disable-next-line
+        middlewaveName,
+        middlewaveOptions
+      } = parseMiddleWaveParams(mw);
+
+      switch (middlewaveName) {
         case 'static':
-          this.use(serve(join(cwd, STATIC_ROOT || 'static')));
+          middlewaveOptions = middlewaveOptions || join(cwd, STATIC_ROOT || 'static');
+          this.use(serve(middlewaveOptions));
           break;
         case 'cors':
-          // 允许一个或多个指定某域名能访问
-          if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
-            corsOptions.origin = (ctx) => {
-              const headerOrigin = ctx.request.header.origin;
-              const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
-              return isValidate ? headerOrigin : false;
+          if (!middlewaveOptions) {
+            // 允许一个或多个指定某域名能访问
+            const corsOptions = {
+              origin: CORS_ORIGIN,
+              allowMethods: CORS_ALLOW_METHODS.split(',')
             };
+            if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
+              corsOptions.origin = (ctx) => {
+                const headerOrigin = ctx.request.header.origin;
+                const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
+                return isValidate ? headerOrigin : false;
+              };
+            }
+            middlewaveOptions = corsOptions;
           }
-          this.use(cors(corsOptions));
+          this.use(cors(middlewaveOptions));
           break;
         case 'session':
-          this.use(session({}, this.koa));
+          middlewaveOptions = middlewaveOptions || {};
+          this.use(session(middlewaveOptions, this.koa));
           break;
         case 'body':
-          this.use(bodyParser());
+          this.use(bodyParser(middlewaveOptions));
           break;
         case 'json':
-          this.use(json({ pretty: JSON_PRETTY === 'true' }));
+          middlewaveOptions = middlewaveOptions || { pretty: JSON_PRETTY === 'true' };
+          this.use(json(middlewaveOptions));
           break;
         case 'pug':
-          (new Pug({ viewPath: join(cwd, PUG_PAGES_PATH) })).use(this.koa);
+          middlewaveOptions = middlewaveOptions || { viewPath: join(cwd, PUG_PAGES_PATH) };
+          (new Pug(middlewaveOptions)).use(this.koa);
           break;
         case 'routes':
-          setupRoutes(this.koa, join(cwd, DOCUMENT_ROOT, 'routes'));
+          middlewaveOptions = middlewaveOptions || join(cwd, DOCUMENT_ROOT, 'routes');
+          setupRoutes(this.koa, middlewaveOptions);
           break;
         default:
           this.use(mw);
