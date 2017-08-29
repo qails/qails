@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.6.2"></a>
+## [1.6.2](https://github.com/qailsjs/qails/compare/v1.6.1...v1.6.2) (2017-08-29)
+
+
+### Bug Fixes
+
+* 修改日志输出格式，便于统一压缩打包 ([00a1833](https://github.com/qailsjs/qails/commit/00a1833))
+
+
+
 <a name="1.6.1"></a>
 ## [1.6.1](https://github.com/qailsjs/qails/compare/v1.6.0...v1.6.1) (2017-07-18)
 
