@@ -1,4 +1,4 @@
-import { Qails } from '../../src'
+import { Qails } from '../../src';
 
 const { PORT } = process.env;
 

@@ -21,5 +21,4 @@ export default class Config extends Model {
   get hasTimestamps() {
     return false;
   }
-
 }
