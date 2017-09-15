@@ -1,7 +1,6 @@
 import { Qails } from '../../src';
 
 const { PORT } = process.env;
-
 const app = new Qails();
 
 app.listen(PORT, (err) => {
@@ -12,4 +11,4 @@ app.listen(PORT, (err) => {
   console.log(`✅ qails listening on port ${PORT}`);
 });
 
-export default app;
+// export default app;

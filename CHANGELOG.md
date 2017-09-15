@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/qailsjs/qails/compare/v2.0.0...v2.0.1) (2017-09-15)
+
+
+
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/qailsjs/qails/compare/v1.6.2...v2.0.0) (2017-08-31)
+
+
+### Features
+
+* Add engines property in package.json ([2cfa8a2](https://github.com/qailsjs/qails/commit/2cfa8a2))
+* 增加GraphQL ([4555caf](https://github.com/qailsjs/qails/commit/4555caf))
+
+
+
 <a name="1.6.2"></a>
 ## [1.6.2](https://github.com/qailsjs/qails/compare/v1.6.1...v1.6.2) (2017-08-29)
 

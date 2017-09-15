@@ -32,7 +32,7 @@ const {
   STATIC_ROOT,
   CORS_ORIGIN,
   CORS_ALLOW_METHODS
- } = process.env;
+} = process.env;
 
 // 创建日志目录
 const logDir = join(cwd, LOG_ROOT);

@@ -289,7 +289,7 @@ export default class ResourceRouter extends Router {
       afterListRouter,
       beforeItemRouter,
       afterItemRouter
-     } = options || {};
+    } = options || {};
     const applyListMiddlewares = compact([].concat(
       beforeListRouter,
       beforeMiddlewaves,
