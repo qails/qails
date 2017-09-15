@@ -1,0 +1,37 @@
+{
+  "name": "examples-graphql",
+  "version": "0.0.0",
+  "scripts": {
+    "db:init": "yarn migrate:rollback && yarn migrate:latest && yarn seed:run",
+    "db:tosql": "babel-node scripts/tosql.js",
+    "migrate:rollback": "babel-node ./node_modules/.bin/knex --knexfile=src/config/knexfile.js migrate:rollback",
+    "migrate:latest": "babel-node ./node_modules/.bin/knex --knexfile=src/config/knexfile.js migrate:latest",
+    "seed:run": "babel-node ./node_modules/.bin/knex --knexfile=src/config/knexfile.js seed:run",
+    "build": "babel src -d dist",
+    "lint": "eslint --fix --quiet \"**/*.js\"",
+    "release": "standard-version && npm publish",
+    "postinstall": "babel-node scripts/postinstall.js",
+    "postrelease": "git push && git push origin --tags",
+    "start": "../../node_modules/.bin/babel-node index.js",
+    "test": "mocha --recursive --compilers js:babel-core/register && yarn lint"
+  },
+  "dependencies": {
+    "axios": "^0.16.1",
+    "qails": "../../src"
+  },
+  "devDependencies": {
+    "casual": "^1.5.17",
+    "mocha": "^3.4.1",
+    "pre-commit": "^1.2.2"
+  },
+  "peerDependencies": {
+    "pm2": "2.x"
+  },
+  "engines": {
+    "npm": ">= 3.0",
+    "node": ">= 7.6"
+  },
+  "pre-commit": [
+    "test"
+  ]
+}

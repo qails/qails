@@ -8,3 +8,4 @@ export { default as envelope } from './util/response-envelope';
 export { increment, gauge, timing } from './util/watcher';
 export { default as base, Model, Collection } from './util/base';
 export { snake } from './util/magic-case';
+export { fetchModels, fetchModel, updateModel, deleteModel } from './util/graphql';
