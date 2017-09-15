@@ -35,7 +35,7 @@ const schema = buildSchema(`
     rollDice(numDice: Int!, numSides: Int): [Int]
     getDie(numSides: Int): RandomDie
     getMessage(id: ID!): Message
-    getMessages(): [Message]
+    getMessages: [Message]
   }
 `);
 
