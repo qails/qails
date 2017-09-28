@@ -1,30 +1,32 @@
-import knex from 'knex';
+import Knex from 'knex';
 import bookshelf from 'bookshelf';
 import modelBase from 'bookshelf-modelbase';
 import cascadeDelete from 'bookshelf-cascade-delete';
 import mask from 'bookshelf-mask';
 import uuid from 'bookshelf-uuid';
 import jsonColumns from 'bookshelf-json-columns';
+import paranoia from 'bookshelf-paranoia';
 import magicCase from './magic-case';
 
 const {
-  KNEX_CLIENT = 'mysql',
-  MYSQL_HOST = 'localhost',
-  MYSQL_USER = 'root',
-  MYSQL_PASSWORD = '',
-  MYSQL_DATABASE = 'test',
-  MYSQL_PORT = '3306',
-  MODEL_VIRTUALS = 'true',
-  MODEL_VISIBILITY = 'true',
-  MODEL_PAGINATION = 'true',
-  MODEL_CASCADEDELETE = 'true',
-  MODEL_MASK = 'true',
-  MODEL_UUID = 'true',
-  MODEL_JSONCOLUMNS = 'true',
-  MODEL_MAGICCASE = 'true'
+  KNEX_CLIENT,
+  MYSQL_HOST,
+  MYSQL_USER,
+  MYSQL_PASSWORD,
+  MYSQL_DATABASE,
+  MYSQL_PORT,
+  MODEL_VIRTUALS,
+  MODEL_VISIBILITY,
+  MODEL_PAGINATION,
+  MODEL_CASCADEDELETE,
+  MODEL_MASK,
+  MODEL_UUID,
+  MODEL_JSONCOLUMNS,
+  MODEL_MAGICCASE,
+  MODEL_SOFTDELETE
 } = process.env;
 
-const base = bookshelf(knex({
+const knexInstance = Knex({
   client: KNEX_CLIENT,
   connection: {
     host: MYSQL_HOST,
@@ -33,7 +35,9 @@ const base = bookshelf(knex({
     database: MYSQL_DATABASE,
     port: MYSQL_PORT
   }
-}));
+});
+
+const base = bookshelf(knexInstance);
 
 // 让 Model 具有返回虚拟字段的功能
 if (MODEL_VIRTUALS === 'true') {
@@ -78,7 +82,13 @@ if (MODEL_MAGICCASE === 'true') {
   base.plugin(magicCase);
 }
 
+// 让 Model 具有软删除记录的能力
+if (MODEL_SOFTDELETE === 'true') {
+  base.plugin(paranoia, { field: 'deletedAt' });
+}
+
 // 外部可以base.knex取到knex client
 export default base;
+export const knex = knexInstance;
 export const Model = base.Model;
 export const Collection = base.Collection;

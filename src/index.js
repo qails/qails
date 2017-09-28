@@ -6,6 +6,6 @@ export { default as Qails } from './qails';
 export { default as Resource } from './util/resource';
 export { default as envelope } from './util/response-envelope';
 export { increment, gauge, timing } from './util/watcher';
-export { default as base, Model, Collection } from './util/base';
+export { default as base, knex, Model, Collection } from './util/base';
 export { snake } from './util/magic-case';
 export { fetchModels, fetchModel, updateModel, deleteModel } from './util/graphql';
