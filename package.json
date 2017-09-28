@@ -1,6 +1,6 @@
 {
   "name": "qails",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "qailsjs/qails",
   "main": "dist/index.js",
