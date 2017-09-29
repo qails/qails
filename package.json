@@ -1,6 +1,6 @@
 {
   "name": "qails",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "qailsjs/qails",
   "main": "dist/index.js",
@@ -31,7 +31,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
     "bookshelf": "^0.10.4",
-    "bookshelf-cascade-delete": "^2.0.1",
+    "bookshelf-cascade-delete": "zhongzhi107/bookshelf-cascade-delete",
     "bookshelf-json-columns": "zhongzhi107/bookshelf-json-columns",
     "bookshelf-mask": "^2.0.1",
     "bookshelf-modelbase": "^2.10.4",
