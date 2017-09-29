@@ -6,7 +6,7 @@ module.exports = {
   // 让 Model 调用 toJSON 方法时具有显示／隐藏某些字段的功能
   MODEL_VISIBILITY: false,
   // 让 Model 具有分页功能
-  MODEL_PAGINATION: false,
+  MODEL_PAGINATION: true,
   // 让 Model 具有时间戳、数据校验和部分CURD功能
   MODEL_BASE: true,
   // 让 Model 具有删除关联数据功能
