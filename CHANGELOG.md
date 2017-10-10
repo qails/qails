@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/qailsjs/qails/compare/v2.2.1...v2.3.0) (2017-10-10)
+
+
+### Features
+
+* 在graphql接口中增加对关联对象的查询控制参数 ([650f13d](https://github.com/qailsjs/qails/commit/650f13d))
+
+
+
 <a name="2.2.1"></a>
 ## [2.2.1](https://github.com/qailsjs/qails/compare/v2.2.0...v2.2.1) (2017-09-29)
 
