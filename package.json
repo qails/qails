@@ -32,7 +32,7 @@
     "babel-register": "^6.26.0",
     "bookshelf": "^0.10.4",
     "bookshelf-cascade-delete": "zhongzhi107/bookshelf-cascade-delete",
-    "bookshelf-json-columns": "zhongzhi107/bookshelf-json-columns",
+    "bookshelf-json-columns": "^2.1.1",
     "bookshelf-mask": "^2.0.1",
     "bookshelf-modelbase": "^2.10.4",
     "bookshelf-paranoia": "^0.11.0",
