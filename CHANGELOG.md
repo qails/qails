@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.3"></a>
+## [2.3.3](https://github.com/qailsjs/qails/compare/v2.3.2...v2.3.3) (2017-10-13)
+
+
+### Bug Fixes
+
+* bookshelf-json-columns[@zhongzhi107](https://github.com/zhongzhi107)/bookshelf-json-columns ([91b068e](https://github.com/qailsjs/qails/commit/91b068e))
+
+
+
 <a name="2.3.2"></a>
 ## [2.3.2](https://github.com/qailsjs/qails/compare/v2.3.1...v2.3.2) (2017-10-13)
 
