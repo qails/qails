@@ -897,9 +897,9 @@ bookshelf-cascade-delete@zhongzhi107/bookshelf-cascade-delete:
     bluebird "^3.3.5"
     lodash "^4.11.1"
 
-bookshelf-json-columns@^2.1.1:
+bookshelf-json-columns@zhongzhi107/bookshelf-json-columns:
   version "2.1.1"
-  resolved "https://registry.yarnpkg.com/bookshelf-json-columns/-/bookshelf-json-columns-2.1.1.tgz#0c104e4f6b3c42edf7615fa96b8786e9977e79f8"
+  resolved "https://codeload.github.com/zhongzhi107/bookshelf-json-columns/tar.gz/b6513c4f72f0645c4bbab94aa67023e20e33ed81"
 
 bookshelf-mask@^2.0.1:
   version "2.0.1"
