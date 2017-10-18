@@ -21,8 +21,9 @@
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
-    "test": "mocha --recursive --compilers js:babel-core/register ./test/index.js",
-    "example:helloworld": "babel-node examples/helloworld/"
+    "test": "mocha --require test/utils/load-dotenv --recursive --compilers js:babel-core/register",
+    "example:helloworld": "babel-node examples/helloworld/",
+    "pre-commit": "npm run lint && npm run test"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
@@ -72,11 +73,16 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "casual": "^1.5.17",
     "mocha": "^3.5.0",
+    "should": "^13.1.2",
     "supertest": "^3.0.0"
   },
   "engines": {
     "node": ">= 7.6.0",
     "npm": ">= 3.0.0"
-  }
+  },
+  "pre-commit": [
+    "pre-commit"
+  ]
 }
