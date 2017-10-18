@@ -12,3 +12,6 @@ npm run lint
 # build
 npm run build
 ```
+
+## Todo
+- magicCase 插件在 modelbase 插件的 `update()` 中不起作用

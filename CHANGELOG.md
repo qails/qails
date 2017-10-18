@@ -2,6 +2,71 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.3"></a>
+## [2.3.3](https://github.com/qailsjs/qails/compare/v2.3.2...v2.3.3) (2017-10-13)
+
+
+### Bug Fixes
+
+* bookshelf-json-columns[@zhongzhi107](https://github.com/zhongzhi107)/bookshelf-json-columns ([91b068e](https://github.com/qailsjs/qails/commit/91b068e))
+
+
+
+<a name="2.3.2"></a>
+## [2.3.2](https://github.com/qailsjs/qails/compare/v2.3.1...v2.3.2) (2017-10-13)
+
+
+
+<a name="2.3.1"></a>
+## [2.3.1](https://github.com/qailsjs/qails/compare/v2.3.0...v2.3.1) (2017-10-13)
+
+
+
+<a name="2.3.0"></a>
+# [2.3.0](https://github.com/qailsjs/qails/compare/v2.2.1...v2.3.0) (2017-10-10)
+
+
+### Features
+
+* 在graphql接口中增加对关联对象的查询控制参数 ([650f13d](https://github.com/qailsjs/qails/commit/650f13d))
+
+
+
+<a name="2.2.1"></a>
+## [2.2.1](https://github.com/qailsjs/qails/compare/v2.2.0...v2.2.1) (2017-09-29)
+
+
+
+<a name="2.2.0"></a>
+# [2.2.0](https://github.com/qailsjs/qails/compare/v2.1.1...v2.2.0) (2017-09-29)
+
+
+### Features
+
+* **bookshelf:** 修改模型配置方式 ([0cf1b7e](https://github.com/qailsjs/qails/commit/0cf1b7e))
+
+
+
+<a name="2.1.1"></a>
+## [2.1.1](https://github.com/qailsjs/qails/compare/v2.1.0...v2.1.1) (2017-09-29)
+
+
+
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/qailsjs/qails/compare/v2.0.2...v2.1.0) (2017-09-28)
+
+
+### Features
+
+* Add soft delete feature ([728ff83](https://github.com/qailsjs/qails/commit/728ff83))
+
+
+
+<a name="2.0.2"></a>
+## [2.0.2](https://github.com/qailsjs/qails/compare/v2.0.1...v2.0.2) (2017-09-15)
+
+
+
 <a name="2.0.1"></a>
 ## [2.0.1](https://github.com/qailsjs/qails/compare/v2.0.0...v2.0.1) (2017-09-15)
 
