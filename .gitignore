@@ -4,3 +4,6 @@ dist/
 logs/
 node_modules/
 yarn-error.log
+test/application/config
+test/application/routes
+test/application/*.pug
