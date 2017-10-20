@@ -66,19 +66,19 @@ export default class ResourceRouter extends Router {
 
   /**
    * Create a new record
-   * @param {Object|Function} middlewave
+   * @param {Object|Function} middleware
    * @param {Object} options
    * @return {Object}
    */
-  create(middlewave, options) {
+  create(middleware, options) {
     const { collection, pattern } = this;
     this.methods.create = true;
 
-    let createMiddlewave = null;
-    if (isFunction(middlewave)) {
-      createMiddlewave = middlewave;
+    let createMiddleware = null;
+    if (isFunction(middleware)) {
+      createMiddleware = middleware;
     } else {
-      createMiddlewave = async (ctx, next) => {
+      createMiddleware = async (ctx, next) => {
         const attributes = ctx.state.attributes || snake(ctx.request.body);
         if (collection(ctx).relatedData) {
           ctx.state.resource = await collection(ctx).create(attributes);
@@ -94,14 +94,14 @@ export default class ResourceRouter extends Router {
           result: ctx.state.resource
         });
       };
-      options = middlewave;
+      options = middleware;
     }
 
-    const { beforeMiddlewaves, afterMiddlewaves } = options || {};
+    const { beforeMiddlewares, afterMiddlewares } = options || {};
     const applyCreateMiddlewares = compact([].concat(
-      beforeMiddlewaves,
-      createMiddlewave,
-      afterMiddlewaves
+      beforeMiddlewares,
+      createMiddleware,
+      afterMiddlewares
     ));
     this.post(pattern.root, compose(applyCreateMiddlewares));
     return this;
@@ -283,8 +283,8 @@ export default class ResourceRouter extends Router {
     };
 
     const {
-      beforeMiddlewaves,
-      afterMiddlewaves,
+      beforeMiddlewares,
+      afterMiddlewares,
       beforeListRouter,
       afterListRouter,
       beforeItemRouter,
@@ -292,17 +292,17 @@ export default class ResourceRouter extends Router {
     } = options || {};
     const applyListMiddlewares = compact([].concat(
       beforeListRouter,
-      beforeMiddlewaves,
+      beforeMiddlewares,
       listMiddleware,
       afterListRouter,
-      afterMiddlewaves
+      afterMiddlewares
     ));
     const applyItemMiddlewares = compact([].concat(
       beforeItemRouter,
-      beforeMiddlewaves,
+      beforeMiddlewares,
       itemMiddleware,
       afterItemRouter,
-      afterMiddlewaves
+      afterMiddlewares
     ));
 
     // read list
@@ -315,16 +315,16 @@ export default class ResourceRouter extends Router {
 
   /**
    * Update record
-   * @param {Object|Function} middlewave
+   * @param {Object|Function} middleware
    * @param {Object} options
    * @return {Object}
    */
-  update(middlewave, options) {
+  update(middleware, options) {
     const { collection, options: { id }, pattern } = this;
     this.methods.update = true;
     let updateMiddleware = null;
-    if (isFunction(middlewave)) {
-      updateMiddleware = middlewave;
+    if (isFunction(middleware)) {
+      updateMiddleware = middleware;
     } else {
       updateMiddleware = async (ctx, next) => {
         const attributes = ctx.state.attributes || snake(ctx.request.body);
@@ -352,14 +352,14 @@ export default class ResourceRouter extends Router {
           });
         }
       };
-      options = middlewave;
+      options = middleware;
     }
 
-    const { beforeMiddlewaves, afterMiddlewaves } = options || {};
+    const { beforeMiddlewares, afterMiddlewares } = options || {};
     const applyUpdateMiddlewares = compact([].concat(
-      beforeMiddlewaves,
+      beforeMiddlewares,
       updateMiddleware,
-      afterMiddlewaves
+      afterMiddlewares
     ));
     this.put(pattern.item, compose(applyUpdateMiddlewares));
     this.patch(pattern.item, compose(applyUpdateMiddlewares));
@@ -369,19 +369,19 @@ export default class ResourceRouter extends Router {
 
   /**
    * Remove a record
-   * @param {Object|Function} middlewave
+   * @param {Object|Function} middleware
    * @param {Object} options
    * @return {Object}
    */
-  destroy(middlewave, options) {
+  destroy(middleware, options) {
     const { collection, pattern, options: { id } } = this;
     this.methods.destroy = true;
 
-    let deleteMiddlewave = null;
-    if (isFunction(middlewave)) {
-      deleteMiddlewave = middlewave;
+    let deleteMiddleware = null;
+    if (isFunction(middleware)) {
+      deleteMiddleware = middleware;
     } else {
-      deleteMiddlewave = async (ctx, next) => {
+      deleteMiddleware = async (ctx, next) => {
         ctx.state.resource = await collection(ctx)
           .query(q => q.where({ [id]: ctx.params[id] }))
           .fetchOne({ require: false });
@@ -401,14 +401,14 @@ export default class ResourceRouter extends Router {
           });
         }
       };
-      options = middlewave;
+      options = middleware;
     }
 
-    const { beforeMiddlewaves, afterMiddlewaves } = options || {};
+    const { beforeMiddlewares, afterMiddlewares } = options || {};
     const applyDeleteMiddlewares = compact([].concat(
-      beforeMiddlewaves,
-      deleteMiddlewave,
-      afterMiddlewaves
+      beforeMiddlewares,
+      deleteMiddleware,
+      afterMiddlewares
     ));
 
     this.del(pattern.item, compose(applyDeleteMiddlewares));
