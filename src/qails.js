@@ -33,13 +33,13 @@ const {
   ROUTES_ENABLE
 } = process.env;
 
-function parseMiddleWaveParams(middlewave) {
-  return Array.isArray(middlewave) ? {
-    middlewaveName: middlewave[0],
-    middlewaveOptions: middlewave[1]
+function parseMiddlewareParams(middleware) {
+  return Array.isArray(middleware) ? {
+    middlewareName: middleware[0],
+    middlewareOptions: middleware[1]
   } : {
-    middlewaveName: middlewave,
-    middlewaveOptions: null
+    middlewareName: middleware,
+    middlewareOptions: null
   };
 }
 
@@ -50,8 +50,8 @@ function envErrorMessage(name) {
   `;
 }
 
-function useLogMiddlewave(self, middlewaveOptions) {
-  if (!middlewaveOptions && !LOG_ROOT) {
+function useLogMiddleware(self, middlewareOptions) {
+  if (!middlewareOptions && !LOG_ROOT) {
     throw new Error(envErrorMessage('LOG_ROOT'));
   }
   // 创建日志目录
@@ -59,7 +59,7 @@ function useLogMiddlewave(self, middlewaveOptions) {
   mkdirp.sync(logDir);
 
   // create a rotating write stream
-  const accessLogStream = FileStreamRotator.getStream(middlewaveOptions || {
+  const accessLogStream = FileStreamRotator.getStream(middlewareOptions || {
     date_format: 'YYYYMMDD',
     filename: `${logDir}/access__%DATE%.log`,
     frequency: 'daily',
@@ -69,16 +69,16 @@ function useLogMiddlewave(self, middlewaveOptions) {
   self.use(morgan('combined', { stream: accessLogStream }));
 }
 
-function useStaticMiddlewave(self, middlewaveOptions) {
-  if (!middlewaveOptions && !STATIC_ROOT) {
+function useStaticMiddleware(self, middlewareOptions) {
+  if (!middlewareOptions && !STATIC_ROOT) {
     throw new Error(envErrorMessage('STATIC_ROOT'));
   }
-  const staticFolder = middlewaveOptions || join(cwd, STATIC_ROOT);
+  const staticFolder = middlewareOptions || join(cwd, STATIC_ROOT);
   self.use(serve(staticFolder));
 }
 
-function useCorsMiddlewave(self, middlewaveOptions) {
-  if (!middlewaveOptions) {
+function useCorsMiddleware(self, middlewareOptions) {
+  if (!middlewareOptions) {
     const corsOptions = {
       origin: CORS_ORIGIN,
       allowMethods: CORS_ALLOW_METHODS.split(',')
@@ -91,43 +91,43 @@ function useCorsMiddlewave(self, middlewaveOptions) {
         return isValidate ? headerOrigin : false;
       };
     }
-    middlewaveOptions = corsOptions;
+    middlewareOptions = corsOptions;
   }
-  self.use(cors(middlewaveOptions));
+  self.use(cors(middlewareOptions));
 }
 
-function useSessionMiddlewave(self, middlewaveOptions) {
+function useSessionMiddleware(self, middlewareOptions) {
   self.koa.keys = [SESSION_KEY];
-  self.use(session(middlewaveOptions || {}, self.koa));
+  self.use(session(middlewareOptions || {}, self.koa));
 }
 
-function useBodyMiddlewave(self, middlewaveOptions) {
-  self.use(bodyParser(middlewaveOptions));
+function useBodyMiddleware(self, middlewareOptions) {
+  self.use(bodyParser(middlewareOptions));
 }
 
-function useJsonMiddlewave(self, middlewaveOptions) {
-  self.use(json(middlewaveOptions || { pretty: JSON_PRETTY === 'true' }));
+function useJsonMiddleware(self, middlewareOptions) {
+  self.use(json(middlewareOptions || { pretty: JSON_PRETTY === 'true' }));
 }
 
-function usePugMiddlewave(self, middlewaveOptions) {
-  if (!middlewaveOptions && !PUG_PAGES_PATH) {
+function usePugMiddleware(self, middlewareOptions) {
+  if (!middlewareOptions && !PUG_PAGES_PATH) {
     throw new Error(envErrorMessage('PUG_PAGES_PATH'));
   }
-  const pug = new Pug(middlewaveOptions || { viewPath: join(cwd, PUG_PAGES_PATH) });
+  const pug = new Pug(middlewareOptions || { viewPath: join(cwd, PUG_PAGES_PATH) });
   pug.use(self.koa);
 }
 
-function useRoutesMiddlewave(self, middlewaveOptions) {
-  if (!middlewaveOptions && !DOCUMENT_ROOT) {
+function useRoutesMiddleware(self, middlewareOptions) {
+  if (!middlewareOptions && !DOCUMENT_ROOT) {
     throw new Error(envErrorMessage('DOCUMENT_ROOT'));
   }
-  setupRoutes(self.koa, middlewaveOptions || join(cwd, DOCUMENT_ROOT, 'routes'));
+  setupRoutes(self.koa, middlewareOptions || join(cwd, DOCUMENT_ROOT, 'routes'));
 }
 
 export default class Qails {
   constructor(options) {
-    const { middlewaves } = options || {
-      middlewaves: [
+    const { middlewares } = options || {
+      middlewares: [
         'log',
         'static',
         'cors',
@@ -141,47 +141,47 @@ export default class Qails {
 
     this.koa = qs(new Koa());
 
-    middlewaves.forEach((mw) => {
+    middlewares.forEach((mw) => {
       const {
-        middlewaveName,
-        middlewaveOptions
-      } = parseMiddleWaveParams(mw);
+        middlewareName,
+        middlewareOptions
+      } = parseMiddlewareParams(mw);
 
-      switch (middlewaveName) {
+      switch (middlewareName) {
         case 'log':
           if (LOG_ENABLE === 'true') {
-            useLogMiddlewave(this, middlewaveOptions);
+            useLogMiddleware(this, middlewareOptions);
           }
           break;
         case 'static':
           if (STATIC_ENABLE === 'true') {
-            useStaticMiddlewave(this, middlewaveOptions);
+            useStaticMiddleware(this, middlewareOptions);
           }
           break;
         case 'cors':
           if (CORS_ENABLE === 'true') {
-            useCorsMiddlewave(this, middlewaveOptions);
+            useCorsMiddleware(this, middlewareOptions);
           }
           break;
         case 'session':
           if (SESSION_ENABLE === 'true') {
-            useSessionMiddlewave(this, middlewaveOptions);
+            useSessionMiddleware(this, middlewareOptions);
           }
           break;
         case 'body':
-          useBodyMiddlewave(this, middlewaveOptions);
+          useBodyMiddleware(this, middlewareOptions);
           break;
         case 'json':
-          useJsonMiddlewave(this, middlewaveOptions);
+          useJsonMiddleware(this, middlewareOptions);
           break;
         case 'pug':
           if (PUG_ENABLE === 'true') {
-            usePugMiddlewave(this, middlewaveOptions);
+            usePugMiddleware(this, middlewareOptions);
           }
           break;
         case 'routes':
           if (ROUTES_ENABLE === 'true') {
-            useRoutesMiddlewave(this, middlewaveOptions);
+            useRoutesMiddleware(this, middlewareOptions);
           }
           break;
         default:

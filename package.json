@@ -21,7 +21,7 @@
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
-    "test": "mocha test/application/features.js",
+    "test": "mocha",
     "example:helloworld": "babel-node examples/helloworld/",
     "pre-commit": "npm run lint && npm run test"
   },

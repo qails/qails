@@ -14,10 +14,6 @@ describe('Plugin: jsoncolumns', () => {
       });
   });
 
-  beforeEach(async () => {
-    // await base.knex(TABLE_NAME).insert({ id });
-  });
-
   afterEach(async () => {
     await base.knex(TABLE_NAME).del();
   });

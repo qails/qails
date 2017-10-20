@@ -1,5 +1,5 @@
 import { existsSync, unlinkSync, statSync, writeFileSync, mkdirSync, rmdirSync } from 'fs';
-import { resolve } from 'path';
+import { resolve, basename } from 'path';
 import request from 'supertest';
 import Router from 'koa-router';
 import should from 'should';
@@ -23,7 +23,7 @@ describe('禁用所有中间件时', () => {
   if (existsSync(log)) {
     unlinkSync(log);
   }
-  const app = new Qails({ middlewaves: [] });
+  const app = new Qails({ middlewares: [] });
   app.use(router.routes());
   const logFileExists = existsSync(log);
 
@@ -72,7 +72,7 @@ describe('启动log中间件', () => {
   if (existsSync(log)) {
     unlinkSync(log);
   }
-  const app = new Qails({ middlewaves: ['log'] });
+  const app = new Qails({ middlewares: ['log'] });
   app.use(router.routes());
 
   it('应该在指定位置生成日志文件', (done) => {
@@ -92,12 +92,12 @@ describe('启动log中间件', () => {
 });
 
 describe('启动static中间件', () => {
-  const app = new Qails({ middlewaves: [['static', __dirname]] });
+  const app = new Qails({ middlewares: [['static', __dirname]] });
   app.use(router.routes());
 
   it('应该能获取到存在的静态文件', (done) => {
     request(app.listen())
-      .get('/init.js')
+      .get(`/${basename(__filename)}`)
       .expect(200, done);
   });
 
@@ -109,7 +109,7 @@ describe('启动static中间件', () => {
 });
 
 describe('启动cors中间件', () => {
-  const app = new Qails({ middlewaves: ['cors'] });
+  const app = new Qails({ middlewares: ['cors'] });
   app.use(router.routes());
 
   it('响应头中应该包含access-control-allow-origin', (done) => {
@@ -121,7 +121,7 @@ describe('启动cors中间件', () => {
 });
 
 describe('启动session中间件', () => {
-  const app = new Qails({ middlewaves: ['session'] });
+  const app = new Qails({ middlewares: ['session'] });
   app.use(async (ctx) => {
     ctx.session.views = (ctx.session.views || 0) + 1;
     ctx.body = ctx.session.views;
@@ -155,7 +155,7 @@ describe('启动session中间件', () => {
 });
 
 describe('启动body中间件', () => {
-  // const app = new Qails({ middlewaves: ['body'] });
+  // const app = new Qails({ middlewares: ['body'] });
   // app.use(router.routes());
   //
   // it('应该能获取到存在的静态文件', (done) => {
@@ -172,7 +172,7 @@ describe('启动body中间件', () => {
 });
 
 describe('启动json中间件', () => {
-  const app = new Qails({ middlewaves: ['json'] });
+  const app = new Qails({ middlewares: ['json'] });
   app.use(async (ctx) => {
     ctx.body = { foo: 'bar' };
   });
@@ -189,7 +189,7 @@ describe('启动pug中间件', () => {
   const template = resolve(__dirname, filename);
   writeFileSync(template, `| ${filename}`);
 
-  const app = new Qails({ middlewaves: [['pug', { viewPath: __dirname }]] });
+  const app = new Qails({ middlewares: [['pug', { viewPath: __dirname }]] });
   app.use(async (ctx) => {
     ctx.render(filename);
   });
@@ -221,7 +221,7 @@ describe('启动routes中间件', () => {
     export default router;
   `);
 
-  const app = new Qails({ middlewaves: [['routes', routesRoot]] });
+  const app = new Qails({ middlewares: [['routes', routesRoot]] });
 
   it('路由解析应该正常', (done) => {
     request(app.listen())
