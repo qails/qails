@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.6"></a>
+## [2.3.6](https://github.com/qailsjs/qails/compare/v2.3.5...v2.3.6) (2017-10-20)
+
+
+### Bug Fixes
+
+* Repair spelling errors: middlewave -> middleware ([25259da](https://github.com/qailsjs/qails/commit/25259da))
+
+
+
 <a name="2.3.5"></a>
 ## [2.3.5](https://github.com/qailsjs/qails/compare/v2.3.4...v2.3.5) (2017-10-20)
 
