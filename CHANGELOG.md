@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.5"></a>
+## [2.3.5](https://github.com/qailsjs/qails/compare/v2.3.4...v2.3.5) (2017-10-20)
+
+
+### Bug Fixes
+
+* 修改单词拼写错误 ([78e6aa7](https://github.com/qailsjs/qails/commit/78e6aa7))
+
+
+
 <a name="2.3.4"></a>
 ## [2.3.4](https://github.com/qailsjs/qails/compare/v2.3.3...v2.3.4) (2017-10-20)
 
