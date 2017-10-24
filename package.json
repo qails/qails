@@ -17,11 +17,14 @@
   "scripts": {
     "build": "rimraf dist && babel src -d dist",
     "start": "pm2 start ecosystem.config.js",
+    "lintModifiedFiles": "git diff --name-only --diff-filter=ACMRTUXB | grep -E '\\.(js)(\\..+)?$' | xargs eslint",
     "lint": "eslint --quiet \"**/*.js\"",
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
     "test": "mocha",
+    "cover": "nyc --reporter=lcov --reporter=html --reporter=text-summary --report-dir test/coverage npm test",
+    "coveralls": "npm run cover && cat ./test/coverage/lcov.info | coveralls",
     "example:helloworld": "babel-node examples/helloworld/",
     "pre-commit": "npm run lint && npm run test"
   },
@@ -74,10 +77,12 @@
   },
   "devDependencies": {
     "casual": "^1.5.17",
+    "coveralls": "^3.0.0",
     "date-fns": "^1.29.0",
     "fs-extra": "^4.0.2",
     "import-fresh": "^2.0.0",
     "mocha": "^3.5.0",
+    "nyc": "^11.2.1",
     "pre-commit": "^1.2.2",
     "should": "^13.1.2",
     "supertest": "^3.0.0"

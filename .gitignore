@@ -4,6 +4,8 @@ dist/
 logs/
 node_modules/
 yarn-error.log
-test/application/config
-test/application/routes
-test/application/*.pug
+/test/application/config
+/test/application/routes
+/test/application/*.pug
+/test/coverage
+/.nyc_output
