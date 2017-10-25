@@ -8,6 +8,7 @@ describe('模型特征配置', () => {
     const features = importFresh('../../src/util/features').default;
     should(features).have.property('MODEL_REGISTRY', false);
   });
+
   it.skip('项目中存在配置文件且包含配置项时，应该使用配置文件中的配置', () => {
     const root = 'test/application';
     process.env.DOCUMENT_ROOT = 'test/application';

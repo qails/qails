@@ -2,7 +2,6 @@
 
 import { join } from 'path';
 import Koa from 'koa';
-// import convert from 'koa-convert';
 import json from 'koa-json';
 import bodyParser from 'koa-bodyparser';
 import qs from 'koa-qs';
@@ -33,22 +32,18 @@ const {
   ROUTES_ENABLE
 } = process.env;
 
-function parseMiddlewareParams(middleware) {
-  return Array.isArray(middleware) ? {
-    middlewareName: middleware[0],
-    middlewareOptions: middleware[1]
-  } : {
-    middlewareName: middleware,
-    middlewareOptions: null
-  };
-}
+const parseMiddlewareParams = middleware => (Array.isArray(middleware) ? {
+  middlewareName: middleware[0],
+  middlewareOptions: middleware[1]
+} : {
+  middlewareName: middleware,
+  middlewareOptions: null
+});
 
-function envErrorMessage(name) {
-  return `
-    Miss environment variable: ${name}
-    Please check \`.env\` file in the project root
-  `;
-}
+const envErrorMessage = name => `
+  Miss environment variable: ${name}
+  Please check \`.env\` file in the project root
+`;
 
 function useLogMiddleware(self, middlewareOptions) {
   if (!middlewareOptions && !LOG_ROOT) {

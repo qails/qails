@@ -6,7 +6,7 @@ import { isFunction, isObject } from 'lodash';
  * @param {object} app
  * @param {object} modules
  */
-function appendRoutes(app, modules) {
+const appendRoutes = (app, modules) => {
   Object.keys(modules).forEach((key) => {
     const module = modules[key];
     if (module.default && isFunction(module.default.routes)) {
@@ -15,7 +15,7 @@ function appendRoutes(app, modules) {
       appendRoutes(app, module);
     }
   });
-}
+};
 
 export default (app, dirname) => {
   appendRoutes(app, requireAll({

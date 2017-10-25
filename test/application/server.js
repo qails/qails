@@ -155,20 +155,14 @@ describe('启动session中间件', () => {
 });
 
 describe('启动body中间件', () => {
-  // const app = new Qails({ middlewares: ['body'] });
-  // app.use(router.routes());
-  //
-  // it('应该能获取到存在的静态文件', (done) => {
-  //   request(app.listen())
-  //     .get('/init.js')
-  //     .expect(200, done);
-  // });
-  //
-  // it('不存在的文件应该返回404', (done) => {
-  //   request(app.listen())
-  //     .get('/404.js')
-  //     .expect(404, done);
-  // });
+  const app = new Qails({ middlewares: ['body'] });
+  app.use(router.routes());
+
+  it('应该能获取到存在的静态文件', (done) => {
+    request(app.listen())
+      .get('/')
+      .expect(200, done);
+  });
 });
 
 describe('启动json中间件', () => {
@@ -208,28 +202,58 @@ describe('启动routes中间件', () => {
   const hello = 'hello';
   const filename = 'index.js';
   const routesRoot = resolve(__dirname, 'routes');
+  const routesSub = resolve(routesRoot, 'sub');
+  const getText = endpoint => `
+    import Router from 'koa-router';
+    const router = new Router();
+    router.get('${endpoint}', async (ctx) => {
+      ctx.body = '${hello}';
+    });
+    export default router;
+  `;
   if (!existsSync(routesRoot)) {
     mkdirSync(routesRoot);
   }
   const homeRouter = resolve(routesRoot, filename);
-  writeFileSync(homeRouter, `
-    import Router from 'koa-router';
-    const router = new Router();
-    router.get('/', async (ctx) => {
-      ctx.body = '${hello}';
-    });
-    export default router;
-  `);
+  writeFileSync(homeRouter, getText('/'));
+
+  if (!existsSync(routesSub)) {
+    mkdirSync(routesSub);
+  }
+  const subRouter = resolve(routesSub, filename);
+  writeFileSync(subRouter, getText('/sub'));
 
   const app = new Qails({ middlewares: [['routes', routesRoot]] });
 
-  it('路由解析应该正常', (done) => {
+  it('一级目录路由解析应该正常', (done) => {
     request(app.listen())
       .get('/')
+      .expect(hello, done);
+  });
+
+  it('多级目录路由解析应该正常', (done) => {
+    request(app.listen())
+      .get('/sub')
       .expect(hello, () => {
+        unlinkSync(subRouter);
         unlinkSync(homeRouter);
+        rmdirSync(routesSub);
         rmdirSync(routesRoot);
         return done();
       });
+  });
+});
+
+describe('启动自定义中间件', () => {
+  const body = 'body';
+  const custom = async (ctx) => {
+    ctx.body = body;
+  };
+  const app = new Qails({ middlewares: [custom] });
+
+  it('应该返回custom', (done) => {
+    request(app.listen())
+      .get('/')
+      .expect(body, done);
   });
 });
