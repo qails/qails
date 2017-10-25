@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="2.3.10"></a>
+## [2.3.10](https://github.com/qailsjs/qails/compare/v2.3.9...v2.3.10) (2017-10-25)
+
+
+### Bug Fixes
+
+* Fix bookshelf-cascade-delete error ([d026ad6](https://github.com/qailsjs/qails/commit/d026ad6))
+
+
+
 <a name="2.3.9"></a>
 ## [2.3.9](https://github.com/qailsjs/qails/compare/v2.3.8...v2.3.9) (2017-10-25)
 
