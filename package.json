@@ -18,7 +18,7 @@
     "build": "rimraf dist && babel src -d dist",
     "start": "pm2 start ecosystem.config.js",
     "lintModifiedFiles": "git diff --name-only --diff-filter=ACMRTUXB | grep -E '\\.(js)(\\..+)?$' | xargs eslint",
-    "lint": "eslint --quiet \"**/*.js\"",
+    "lint": "eslint --fix --quiet \"**/*.js\"",
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",

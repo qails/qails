@@ -3,8 +3,17 @@ import Router from 'koa-router';
 import compose from 'koa-compose';
 import Collection from 'bookshelf/lib/collection';
 import { defaults, isFunction, compact, chunk, startsWith } from 'lodash';
-import { snake } from './magic-case';
+import { snake as snakeCase } from './magic-case';
 import envelope from './response-envelope';
+import { MODEL_MAGICCASE } from './features';
+
+const snake = (s) => {
+  if (MODEL_MAGICCASE) {
+    return snakeCase(s);
+  }
+  return s;
+};
+
 /**
  * @class
  */

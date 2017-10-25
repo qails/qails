@@ -3,10 +3,10 @@ An API-driven framework for building nodejs apps, using MVC conventions. It only
 
 ## Status
 
-[![npm version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-[![deps][deps]][deps-url]
-[![coverage status][coveralls-image]][coveralls-url]
+[![npm version](https://badge.fury.io/js/qails.svg)](https://badge.fury.io/js/qails)
+[![Build Status](https://travis-ci.org/qails/qails.svg?branch=master)](https://travis-ci.org/qails/qails)
+[![Coverage Status](https://coveralls.io/repos/github/qails/qails/badge.svg)](https://coveralls.io/github/qails/qails)
+[![Dependency Status](https://david-dm.org/qails/qails.svg)](https://david-dm.org/qails/qails)
 
 ## Commands
 ```
@@ -22,3 +22,6 @@ npm run build
 
 ## Todo
 - magicCase 插件在 modelbase 插件的 `update()` 中不起作用
+
+## 依赖
+- bodyParse 中间件必须启用，http verb 中默认不包含 `PUT` `PATCH` `DELETE`
