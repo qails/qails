@@ -1,4 +1,4 @@
-import cascadeDelete from 'bookshelf-cascade-delete';
+import cascadeDelete from 'bookshelf-cascade-delete-fix';
 import should from 'should';
 import { base } from '../../src';
 

@@ -1,3 +1,4 @@
 --recursive
 --require test/.env.js
---compilers js:babel-core/register
+--require babel-core/register
+--exit

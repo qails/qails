@@ -3,7 +3,10 @@ An API-driven framework for building nodejs apps, using MVC conventions. It only
 
 ## Status
 
-[![npm version][npm-image]][npm-url] [![build status][travis-image]][travis-url] [![coverage status][coveralls-image]][coveralls-url]
+[![npm version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![deps][deps]][deps-url]
+[![coverage status][coveralls-image]][coveralls-url]
 
 ## Commands
 ```

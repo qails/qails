@@ -1,4 +1,4 @@
-import jsonColumns from 'bookshelf-json-columns';
+import jsonColumns from 'bookshelf-json-columns-fix';
 import should from 'should';
 import { base } from '../../src';
 
