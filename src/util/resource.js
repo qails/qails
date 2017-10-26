@@ -7,6 +7,11 @@ import { snake as snakeCase } from './magic-case';
 import envelope from './response-envelope';
 import { MODEL_MAGICCASE } from './features';
 
+const catchHandle = (e) => {
+  console.log(e);
+};
+
+
 const snake = (s) => {
   if (MODEL_MAGICCASE) {
     return snakeCase(s);
@@ -89,12 +94,12 @@ export default class ResourceRouter extends Router {
     } else {
       createMiddleware = async (ctx, next) => {
         const attributes = ctx.state.attributes || snake(ctx.request.body);
-        if (collection(ctx).relatedData) {
-          ctx.state.resource = await collection(ctx).create(attributes);
-        } else {
-          ctx.state.resource = collection(ctx).model.forge();
-          await ctx.state.resource.save(attributes);
-        }
+        // if (collection(ctx).relatedData) {
+        //   ctx.state.resource = await collection(ctx).create(attributes);
+        // } else {
+        ctx.state.resource = collection(ctx).model.forge();
+        await ctx.state.resource.save(attributes);
+        // }
         await next();
         ctx.status = 201;
         ctx.body = envelope({
@@ -233,9 +238,7 @@ export default class ResourceRouter extends Router {
               }
             }
           })
-          .catch((e) => {
-            console.log(e);
-          });
+          .catch(catchHandle);
       } else {
         await model
           .fetchAll(fetchParams)
@@ -248,9 +251,7 @@ export default class ResourceRouter extends Router {
               }
             }
           })
-          .catch((e) => {
-            console.log(e);
-          });
+          .catch(catchHandle);
       }
 
       await next();
