@@ -11,7 +11,6 @@ const catchHandle = (e) => {
   console.log(e);
 };
 
-
 const snake = (s) => {
   if (MODEL_MAGICCASE) {
     return snakeCase(s);

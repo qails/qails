@@ -4,15 +4,17 @@
 import { existsSync } from 'fs';
 import { resolve } from 'path';
 
-const { DOCUMENT_ROOT } = process.env;
-const filename = 'config/model.js';
-const configFile = resolve(process.cwd(), DOCUMENT_ROOT, filename);
-const defaultFeatures = require(`../${filename}`);
-// eslint-disable-next-line
-let features = defaultFeatures;
-if (existsSync(configFile)) {
-  const customFeatures = require(configFile);
-  features = { ...defaultFeatures, ...customFeatures };
-}
-
-export default features;
+export default (name) => {
+  const { DOCUMENT_ROOT } = process.env;
+  const filename = 'config/model.js';
+  const configInQails = resolve(__dirname, `../${filename}`);
+  const configInProject = resolve(process.cwd(), DOCUMENT_ROOT, filename);
+  const defaultFeatures = require(configInQails);
+  // eslint-disable-next-line
+  let features = defaultFeatures;
+  if (configInQails !== configInProject && existsSync(configInProject)) {
+    const customFeatures = require(configInProject);
+    features = { ...defaultFeatures, ...customFeatures };
+  }
+  return features[name];
+};

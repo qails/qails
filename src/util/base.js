@@ -32,58 +32,58 @@ const knexInstance = Knex({
 const base = bookshelf(knexInstance);
 
 // 让 Model 具有自动注册到中央位置的功能
-if (features.MODEL_REGISTRY) {
+if (features('MODEL_REGISTRY')) {
   base.plugin('registry');
 }
 
 // 让 Model 具有返回虚拟字段的功能
-if (features.MODEL_VIRTUALS) {
+if (features('MODEL_VIRTUALS')) {
   base.plugin('virtuals');
 }
 
 // 让 Model 调用 toJSON 方法时具有显示／隐藏某些字段的功能
-if (features.MODEL_VISIBILITY) {
+if (features('MODEL_VISIBILITY')) {
   base.plugin('visibility');
 }
 
 // 让 Model 具有时间戳、数据校验和部分CURD功能
-if (features.MODEL_BASE) {
+if (features('MODEL_BASE')) {
   base.plugin(modelBase.pluggable);
 }
 // 让 Model 具有分页功能
-if (features.MODEL_PAGINATION) {
+if (features('MODEL_PAGINATION')) {
   base.plugin('pagination');
 }
 
 // 让 Model 具有删除关联数据功能
-if (features.MODEL_CASCADEDELETE) {
+if (features('MODEL_CASCADEDELETE')) {
   base.plugin(cascadeDelete);
 }
 
 // 让 Model 具有返回自定义字段的功能
-if (features.MODEL_MASK) {
+if (features('MODEL_MASK')) {
   base.plugin(mask);
 }
 
 // 让 Model 具有自动生成UUID的功能
-if (features.MODEL_UUID) {
+if (features('MODEL_UUID')) {
   const options = features.MODEL_UUID === true ? null : features.MODEL_UUID;
   base.plugin(uuid, options);
 }
 
 // 让 Model 具有自动存储序列化对象的能力
-if (features.MODEL_JSONCOLUMNS) {
+if (features('MODEL_JSONCOLUMNS')) {
   base.plugin(jsonColumns);
 }
 
 // 让 Model 具有自动转换对象 key 拼写的能力
-if (features.MODEL_MAGICCASE) {
+if (features('MODEL_MAGICCASE')) {
   base.plugin(magicCase);
 }
 
 // 让 Model 具有软删除记录的能力
-if (features.MODEL_SOFTDELETE) {
-  const options = features.MODEL_SOFTDELETE === true ? null : features.MODEL_SOFTDELETE;
+if (features('MODEL_SOFTDELETE')) {
+  const options = features('MODEL_SOFTDELETE') === true ? null : features('MODEL_SOFTDELETE');
   base.plugin(paranoia, options);
 }
 

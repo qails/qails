@@ -6,6 +6,7 @@ An API-driven framework for building nodejs apps, using MVC conventions. It only
 [![npm version](https://badge.fury.io/js/qails.svg)](https://badge.fury.io/js/qails)
 [![Build Status](https://travis-ci.org/qails/qails.svg?branch=master)](https://travis-ci.org/qails/qails)
 [![Coverage Status](https://coveralls.io/repos/github/qails/qails/badge.svg)](https://coveralls.io/github/qails/qails)
+[![Coverage Status](https://coveralls.io/repos/github/qails/qails/badge.svg?branch=master)](https://coveralls.io/github/qails/qails?branch=master)
 [![Dependency Status](https://david-dm.org/qails/qails.svg)](https://david-dm.org/qails/qails)
 
 ## Commands

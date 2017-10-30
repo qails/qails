@@ -16,15 +16,13 @@
   "license": "MIT",
   "scripts": {
     "build": "rimraf dist && babel src -d dist",
-    "start": "pm2 start ecosystem.config.js",
     "lintModifiedFiles": "git diff --name-only --diff-filter=ACMRTUXB | grep -E '\\.(js)(\\..+)?$' | xargs eslint",
     "lint": "eslint --fix --quiet \"**/*.js\"",
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
     "test": "mocha",
-    "cover": "nyc --reporter=lcov --reporter=html --reporter=text-summary --report-dir coverage npm test",
-    "cover2": "nyc npm test",
+    "cover": "nyc --reporter=lcov --reporter=html --reporter=text --report-dir coverage npm test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls",
     "example:helloworld": "babel-node examples/helloworld/",
     "pre-commit": "npm run lint && npm run test"

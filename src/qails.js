@@ -14,110 +14,12 @@ import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 import setupRoutes from './util/setup-routes';
 
-const cwd = process.cwd();
-const {
-  DOCUMENT_ROOT,
-  LOG_ENABLE,
-  LOG_ROOT,
-  JSON_PRETTY,
-  PUG_ENABLE,
-  PUG_PAGES_PATH,
-  STATIC_ENABLE,
-  STATIC_ROOT,
-  CORS_ENABLE,
-  CORS_ORIGIN,
-  CORS_ALLOW_METHODS,
-  SESSION_ENABLE,
-  SESSION_KEY,
-  ROUTES_ENABLE
-} = process.env;
-
-const parseMiddlewareParams = middleware => (Array.isArray(middleware) ? {
-  middlewareName: middleware[0],
-  middlewareOptions: middleware[1]
-} : {
-  middlewareName: middleware,
-  middlewareOptions: null
-});
-
-const envErrorMessage = name => `
-  Miss environment variable: ${name}
-  Please check \`.env\` file in the project root
-`;
-
-function useLogMiddleware(self, middlewareOptions) {
-  if (!middlewareOptions && !LOG_ROOT) {
-    throw new Error(envErrorMessage('LOG_ROOT'));
+const DotenvException = class {
+  constructor(name) {
+    this.name = 'DotenvException';
+    this.message = `Miss environment variable: ${name}. Please check \`.env\` file in the project root`;
   }
-  // 创建日志目录
-  const logDir = join(cwd, LOG_ROOT);
-  mkdirp.sync(logDir);
-
-  // create a rotating write stream
-  const accessLogStream = FileStreamRotator.getStream(middlewareOptions || {
-    date_format: 'YYYYMMDD',
-    filename: `${logDir}/access__%DATE%.log`,
-    frequency: 'daily',
-    verbose: false
-  });
-
-  self.use(morgan('combined', { stream: accessLogStream }));
-}
-
-function useStaticMiddleware(self, middlewareOptions) {
-  if (!middlewareOptions && !STATIC_ROOT) {
-    throw new Error(envErrorMessage('STATIC_ROOT'));
-  }
-  const staticFolder = middlewareOptions || join(cwd, STATIC_ROOT);
-  self.use(serve(staticFolder));
-}
-
-function useCorsMiddleware(self, middlewareOptions) {
-  if (!middlewareOptions) {
-    const corsOptions = {
-      origin: CORS_ORIGIN,
-      allowMethods: CORS_ALLOW_METHODS.split(',')
-    };
-    // 允许一个或多个指定某域名能访问
-    if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
-      corsOptions.origin = (ctx) => {
-        const headerOrigin = ctx.request.header.origin;
-        const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
-        return isValidate ? headerOrigin : false;
-      };
-    }
-    middlewareOptions = corsOptions;
-  }
-  self.use(cors(middlewareOptions));
-}
-
-function useSessionMiddleware(self, middlewareOptions) {
-  self.koa.keys = [SESSION_KEY];
-  self.use(session(middlewareOptions || {}, self.koa));
-}
-
-function useBodyMiddleware(self, middlewareOptions) {
-  self.use(bodyParser(middlewareOptions));
-}
-
-function useJsonMiddleware(self, middlewareOptions) {
-  self.use(json(middlewareOptions || { pretty: JSON_PRETTY === 'true' }));
-}
-
-function usePugMiddleware(self, middlewareOptions) {
-  if (!middlewareOptions && !PUG_PAGES_PATH) {
-    throw new Error(envErrorMessage('PUG_PAGES_PATH'));
-  }
-  const pug = new Pug(middlewareOptions || { viewPath: join(cwd, PUG_PAGES_PATH) });
-  pug.use(self.koa);
-}
-
-function useRoutesMiddleware(self, middlewareOptions) {
-  if (!middlewareOptions && !DOCUMENT_ROOT) {
-    throw new Error(envErrorMessage('DOCUMENT_ROOT'));
-  }
-  setupRoutes(self.koa, middlewareOptions || join(cwd, DOCUMENT_ROOT, 'routes'));
-}
+};
 
 export default class Qails {
   constructor(options) {
@@ -133,6 +35,106 @@ export default class Qails {
         'routes'
       ]
     };
+
+    const cwd = process.cwd();
+    const {
+      DOCUMENT_ROOT,
+      LOG_ENABLE,
+      LOG_ROOT,
+      JSON_PRETTY,
+      PUG_ENABLE,
+      PUG_PAGES_PATH,
+      STATIC_ENABLE,
+      STATIC_ROOT,
+      CORS_ENABLE,
+      CORS_ORIGIN,
+      CORS_ALLOW_METHODS,
+      SESSION_ENABLE,
+      SESSION_KEY,
+      ROUTES_ENABLE
+    } = process.env;
+
+    const parseMiddlewareParams = middleware => (Array.isArray(middleware) ? {
+      middlewareName: middleware[0],
+      middlewareOptions: middleware[1]
+    } : {
+      middlewareName: middleware,
+      middlewareOptions: null
+    });
+
+    function useLogMiddleware(self, middlewareOptions) {
+      if (!middlewareOptions && !LOG_ROOT) {
+        throw new DotenvException('LOG_ROOT');
+      }
+      // 创建日志目录
+      const logDir = join(cwd, LOG_ROOT);
+      mkdirp.sync(logDir);
+
+      // create a rotating write stream
+      const accessLogStream = FileStreamRotator.getStream(middlewareOptions || {
+        date_format: 'YYYYMMDD',
+        filename: `${logDir}/access__%DATE%.log`,
+        frequency: 'daily',
+        verbose: false
+      });
+
+      self.use(morgan('combined', { stream: accessLogStream }));
+    }
+
+    function useStaticMiddleware(self, middlewareOptions) {
+      if (!middlewareOptions && !STATIC_ROOT) {
+        throw new DotenvException('STATIC_ROOT');
+      }
+      const staticFolder = middlewareOptions || join(cwd, STATIC_ROOT);
+      self.use(serve(staticFolder));
+    }
+
+    function useCorsMiddleware(self, middlewareOptions) {
+      if (!middlewareOptions) {
+        const corsOptions = {
+          origin: CORS_ORIGIN,
+          allowMethods: CORS_ALLOW_METHODS.split(',')
+        };
+        // 允许一个或多个指定某域名能访问
+        if (CORS_ORIGIN && CORS_ORIGIN !== '*') {
+          corsOptions.origin = (ctx) => {
+            const headerOrigin = ctx.request.header.origin;
+            const isValidate = CORS_ORIGIN.split(',').some(whitelist => new RegExp(whitelist).test(headerOrigin));
+            return isValidate ? headerOrigin : false;
+          };
+        }
+        middlewareOptions = corsOptions;
+      }
+      self.use(cors(middlewareOptions));
+    }
+
+    function useSessionMiddleware(self, middlewareOptions) {
+      self.koa.keys = [SESSION_KEY];
+      self.use(session(middlewareOptions || {}, self.koa));
+    }
+
+    function useBodyMiddleware(self, middlewareOptions) {
+      self.use(bodyParser(middlewareOptions));
+    }
+
+    function useJsonMiddleware(self, middlewareOptions) {
+      self.use(json(middlewareOptions || { pretty: JSON_PRETTY === 'true' }));
+    }
+
+    function usePugMiddleware(self, middlewareOptions) {
+      if (!middlewareOptions && !PUG_PAGES_PATH) {
+        throw new DotenvException('PUG_PAGES_PATH');
+      }
+      const pug = new Pug(middlewareOptions || { viewPath: join(cwd, PUG_PAGES_PATH) });
+      pug.use(self.koa);
+    }
+
+    function useRoutesMiddleware(self, middlewareOptions) {
+      if (!middlewareOptions && !DOCUMENT_ROOT) {
+        throw new DotenvException('DOCUMENT_ROOT');
+      }
+      setupRoutes(self.koa, middlewareOptions || join(cwd, DOCUMENT_ROOT, 'routes'));
+    }
 
     this.koa = qs(new Koa());
 

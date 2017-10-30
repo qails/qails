@@ -1,5 +1,5 @@
 import requireAll from 'require-all';
-import { isFunction, isObject } from 'lodash';
+import { isFunction } from 'lodash';
 
 /**
  * 递归添加路由配置
@@ -11,7 +11,8 @@ const appendRoutes = (app, modules) => {
     const module = modules[key];
     if (module.default && isFunction(module.default.routes)) {
       app.use(module.default.routes());
-    } else if (isObject(module)) {
+    // } else if (isObject(module)) {
+    } else {
       appendRoutes(app, module);
     }
   });
@@ -20,6 +21,7 @@ const appendRoutes = (app, modules) => {
 export default (app, dirname) => {
   appendRoutes(app, requireAll({
     dirname,
+    filter: /\.js$/,
     recursive: true
   }));
 };
