@@ -14,6 +14,17 @@
     "dist"
   ],
   "license": "MIT",
+  "nyc": {
+    "include": [
+      "src"
+    ],
+    "reporter": [
+      "lcov",
+      "html",
+      "text"
+    ],
+    "report-dir": "./coverage"
+  },
   "scripts": {
     "build": "rimraf dist && babel src -d dist",
     "lintModifiedFiles": "git diff --name-only --diff-filter=ACMRTUXB | grep -E '\\.(js)(\\..+)?$' | xargs eslint",
@@ -21,8 +32,8 @@
     "release": "standard-version && npm publish",
     "prepublish": "npm run build",
     "postrelease": "git push && git push origin --tags",
-    "test": "rimraf test/.tmp && mkdirp test/.tmp && mocha",
-    "cover": "nyc --reporter=lcov --reporter=html --reporter=text --report-dir coverage npm test",
+    "test": "mocha",
+    "cover": "nyc npm test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls",
     "example:helloworld": "babel-node examples/helloworld/",
     "pre-commit": "npm run lint && npm run test"
@@ -47,7 +58,8 @@
     "file-stream-rotator": "0.2.0",
     "graphql": "^0.11.2",
     "graphql-tools": "^2.6.1",
-    "joi": "^13.0.1",
+    "import-fresh": "^2.0.0",
+    "joi": "^10.6.0",
     "knex": "^0.13.0",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
