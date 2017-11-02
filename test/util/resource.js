@@ -3,12 +3,15 @@ import request from 'supertest';
 import mask from 'bookshelf-mask';
 import { range, first, last } from 'lodash';
 import { base, Qails, Resource } from '../../src';
+import magicCase from '../../src/util/magicCase';
+import bodyParser from '../../src/middlewares/bodyParser';
 
 const ROW_COUNT = 15;
 const TABLE_BOOKS = 'books';
 const TABLE_CHAPTERS = 'chapters';
 
 base.plugin(mask);
+base.plugin(magicCase);
 const Chapter = class extends base.Model {
   get tableName() { return TABLE_CHAPTERS; }
   get hasTimestamps() { return false; }
@@ -54,17 +57,16 @@ after(async () => {
 
 describe('Resource', () => {
   describe('Resource.define()', () => {
-    const app = new Qails({ middlewares: ['body'] });
+    const app = new Qails(bodyParser());
     app.use(Resource.define(Book.collection()).routes());
 
     describe('查询', () => {
       describe('查询列表', () => {
         describe('无查询条件', () => {
-          it('无查询条件', (done) => {
+          it('应该返回所有记录', (done) => {
             request(app.listen())
               .get('/books')
-              .expect('Content-Type', /json/)
-              .expect(200, (err, res) => {
+              .end((err, res) => {
                 const { body: { data } } = res;
                 should(data).be.not.undefined();
                 data.should.have.length(ROW_COUNT);
@@ -74,18 +76,6 @@ describe('Resource', () => {
         });
         describe('有查询条件', () => {
           describe('where', () => {
-            it('where=id&where==&where=2', (done) => {
-              const id = 2;
-              request(app.listen())
-                .get(`/books?where=id&where==&where=${id}`)
-                .expect('Content-Type', /json/)
-                .expect(200, (err, res) => {
-                  const { body: { data } } = res;
-                  should(data).be.not.undefined();
-                  first(data).should.have.property('id', id);
-                  return done();
-                });
-            });
             it('where[id]=2', (done) => {
               const id = 2;
               request(app.listen())
@@ -98,10 +88,42 @@ describe('Resource', () => {
                   return done();
                 });
             });
+            it('where=id&where==&where=2', (done) => {
+              const id = 2;
+              request(app.listen())
+                .get(`/books?where=id&where==&where=${id}`)
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  should(data).be.not.undefined();
+                  first(data).should.have.property('id', id);
+                  return done();
+                });
+            });
+            it('长度对3取模后余数不足三的数组类型参数应该无效', (done) => {
+              request(app.listen())
+                .get('/books?where=id')
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  data.should.have.length(ROW_COUNT);
+                  return done();
+                });
+            });
+            it('无记录返回', (done) => {
+              const id = -1;
+              request(app.listen())
+                .get(`/books?where[id]=${id}`)
+                .expect('Content-Type', /json/)
+                .expect(200, (err, res) => {
+                  res.body.should.have.property('code', 0);
+                  res.body.should.have.property('message', 'Success');
+                  res.body.should.not.have.property('data');
+                  return done();
+                });
+            });
           });
 
           describe('andWhere', () => {
-            it('数组类型参数', (done) => {
+            it('应该支持对象类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&andWhere[id]=3')
                 .expect('Content-Type', /json/)
@@ -111,10 +133,28 @@ describe('Resource', () => {
                   return done();
                 });
             });
-            it('对象类型参数', (done) => {
+            it('应该支持数组类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&andWhere=id&andWhere==&andWhere=3')
-                .expect('Content-Type', /json/)
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  should(data).be.undefined();
+                  return done();
+                });
+            });
+            it('不完整的数组类型参数应该无效', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&andWhere=id')
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  data.should.have.length(1);
+                  first(data).should.have.property('id', 2);
+                  return done();
+                });
+            });
+            it('长度对3取模后余数不足三的数组类型参数应该无效', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&andWhere=id&andWhere==&andWhere=3&andWhere=id')
                 .expect(200, (err, res) => {
                   const { body: { data } } = res;
                   should(data).be.undefined();
@@ -123,7 +163,7 @@ describe('Resource', () => {
             });
           });
           describe('orWhere', () => {
-            it('数组类型参数', (done) => {
+            it('应该支持对象类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&orWhere[id]=3')
                 .expect('Content-Type', /json/)
@@ -135,7 +175,7 @@ describe('Resource', () => {
                   return done();
                 });
             });
-            it('对象类型参数', (done) => {
+            it('应该支持数组类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&orWhere=id&orWhere==&orWhere=3')
                 .expect('Content-Type', /json/)
@@ -144,6 +184,27 @@ describe('Resource', () => {
                   data.should.have.length(2);
                   first(data).should.have.property('id', 2);
                   last(data).should.have.property('id', 3);
+                  return done();
+                });
+            });
+            it('不完整的数组类型参数应该无效', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&orWhere=id')
+                .expect('Content-Type', /json/)
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  data.should.have.length(1);
+                  first(data).should.have.property('id', 2);
+                  return done();
+                });
+            });
+            it('长度对3取模后余数不足三的数组类型参数应该无效', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&orWhere=id&orWhere==')
+                .expect(200, (err, res) => {
+                  const { body: { data } } = res;
+                  data.should.have.length(1);
+                  first(data).should.have.property('id', 2);
                   return done();
                 });
             });
@@ -193,7 +254,6 @@ describe('Resource', () => {
               .end((err, res) => {
                 const { body: { code, data } } = res;
                 code.should.eql(0);
-                // console.log(first(data));
                 first(data).should.have.property('id', 15);
                 return done();
               });
@@ -201,6 +261,18 @@ describe('Resource', () => {
         });
         describe('embed', () => {
           it('withRelated存在', (done) => {
+            request(app.listen())
+              .get('/books?withRelated=chapters')
+              .expect('Content-Type', /json/)
+              .expect(200, (err, res) => {
+                const { body: { data } } = res;
+                should(data).be.not.undefined();
+                data.should.have.length(ROW_COUNT);
+                first(data).should.have.property('chapters');
+                return done();
+              });
+          });
+          it('embed存在', (done) => {
             request(app.listen())
               .get('/books?embed=chapters')
               .expect('Content-Type', /json/)
@@ -212,13 +284,15 @@ describe('Resource', () => {
                 return done();
               });
           });
-          it.skip('withRelated不存在', (done) => {
+          it('withRelated不存在应该返回500状态码', (done) => {
+            const embed = 'xxx';
             request(app.listen())
-              .get('/books?embed=author')
+              .get(`/books?embed=${embed}`)
               .end((err, res) => {
-                const { body: { code, message } } = res;
-                code.should.eql(0);
-                message.should.eql('Success');
+                const { body } = res;
+                body.should.have.property('code', 500);
+                body.should.have.property('message', `Error: ${embed} is not defined on the model.`);
+                body.should.not.have.property('data');
                 return done();
               });
           });
@@ -277,6 +351,18 @@ describe('Resource', () => {
                 return done();
               });
           });
+          it('withRelated不存在时应该返回状态码500', (done) => {
+            const embed = 'xxx';
+            request(app.listen())
+              .get(`/books?offset=0&embed=${embed}`)
+              .end((err, res) => {
+                const { body } = res;
+                body.should.have.property('code', 500);
+                body.should.have.property('message', `Error: ${embed} is not defined on the model.`);
+                body.should.not.have.property('data');
+                return done();
+              });
+          });
         });
       });
       describe('查询详情', () => {
@@ -290,6 +376,34 @@ describe('Resource', () => {
               should(data).be.not.undefined();
               data.should.have.property('id', id);
               data.should.have.property('chapters');
+              return done();
+            });
+        });
+
+        it('获取一条存在的记录(withRelated)', (done) => {
+          const id = 1;
+          request(app.listen())
+            .get(`/books/${id}?withRelated=chapters`)
+            .expect('Content-Type', /json/)
+            .expect(200, (err, res) => {
+              const { body: { data } } = res;
+              should(data).be.not.undefined();
+              data.should.have.property('id', id);
+              data.should.have.property('chapters');
+              return done();
+            });
+        });
+
+        it('mask', (done) => {
+          const showColumn = 'name';
+          const id = 1;
+          request(app.listen())
+            .get(`/books/${id}?mask=${showColumn}`)
+            .end((err, res) => {
+              const { body: { code, data } } = res;
+              code.should.eql(0);
+              data.should.not.have.property('id');
+              data.should.have.property(showColumn);
               return done();
             });
         });
@@ -413,7 +527,7 @@ describe('Resource', () => {
       ctx.body = body;
       await next();
     };
-    const app = new Qails({ middlewares: ['body'] });
+    const app = new Qails(bodyParser());
     const resource = Resource.define({
       collection: Book.collection(),
       setup(router) {

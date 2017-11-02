@@ -1,7 +1,7 @@
 import casual from 'casual';
 import should from 'should';
 import { base, snake } from '../../src';
-import magicCase from '../../src/util/magic-case';
+import magicCase from '../../src/util/magicCase';
 
 const TABLE_USERS = 'users';
 const TABLE_POSTS = 'posts';

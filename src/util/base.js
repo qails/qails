@@ -6,11 +6,10 @@ import mask from 'bookshelf-mask';
 import uuid from 'bookshelf-uuid';
 import jsonColumns from 'bookshelf-json-columns-fix';
 import paranoia from 'bookshelf-paranoia';
-import magicCase from './magic-case';
+import magicCase from './magicCase';
 import features from './features';
 
 const {
-  KNEX_CLIENT,
   MYSQL_HOST,
   MYSQL_USER,
   MYSQL_PASSWORD,
@@ -19,7 +18,7 @@ const {
 } = process.env;
 
 const knexInstance = Knex({
-  client: KNEX_CLIENT,
+  client: 'mysql',
   connection: {
     host: MYSQL_HOST,
     user: MYSQL_USER,
@@ -67,7 +66,7 @@ if (features('MODEL_MASK')) {
 
 // 让 Model 具有自动生成UUID的功能
 if (features('MODEL_UUID')) {
-  const options = features.MODEL_UUID === true ? null : features.MODEL_UUID;
+  const options = features('MODEL_UUID') === true ? null : features('MODEL_UUID');
   base.plugin(uuid, options);
 }
 
