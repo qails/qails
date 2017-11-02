@@ -1,5 +1,6 @@
 import requireAll from 'require-all';
 import { isFunction } from 'lodash';
+import { resolve } from 'path';
 
 /**
  * 递归添加路由配置
@@ -19,6 +20,8 @@ const appendRoutes = (app, modules) => {
 };
 
 export default (app, dirname) => {
+  const { DOCUMENT_ROOT } = process.env;
+  dirname = dirname || resolve(process.cwd(), DOCUMENT_ROOT, 'routes');
   appendRoutes(app, requireAll({
     dirname,
     filter: /\.js$/,

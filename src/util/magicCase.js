@@ -6,6 +6,15 @@ import {
   isArray
 } from 'lodash';
 
+function snakeCaseExcludeOperator(s) {
+  // 忽略包含比较符的字符串
+  // 可能会出现['id','=','100']这种数据
+  if (/[<>=]/.test(s)) {
+    return s;
+  }
+  return snakeCase(s);
+}
+
 /**
  * 将 object-key 转为大写
  * @param {object|array|string} attributes
@@ -36,13 +45,13 @@ function toCamelCase(attributes, excludeKeys = []) {
  */
 export const snake = (source) => {
   if (isString(source)) {
-    return snakeCase(source);
+    return snakeCaseExcludeOperator(source);
   } else if (isArray(source)) {
-    return source.map(item => snakeCase(item));
+    return source.map(item => snakeCaseExcludeOperator(item));
   } else if (isObject(source)) {
     const dest = {};
     Object.keys(source).forEach((item) => {
-      dest[snakeCase(item)] = source[item];
+      dest[snakeCaseExcludeOperator(item)] = source[item];
     });
     return dest;
   }
@@ -59,7 +68,7 @@ export default (Bookshelf) => {
       this.on('saving', () => {
         const source = this.attributes;
         Object.keys(source).forEach((attribute) => {
-          const newAttribute = snakeCase(attribute);
+          const newAttribute = snakeCaseExcludeOperator(attribute);
           if (newAttribute !== attribute) {
             source[newAttribute] = source[attribute];
             delete source[attribute];
