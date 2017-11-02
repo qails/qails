@@ -3,6 +3,7 @@
 
 import { existsSync } from 'fs';
 import { resolve } from 'path';
+import importFresh from 'import-fresh';
 
 export default (name) => {
   const { DOCUMENT_ROOT } = process.env;
@@ -13,7 +14,7 @@ export default (name) => {
   // eslint-disable-next-line
   let features = defaultFeatures;
   if (configInQails !== configInProject && existsSync(configInProject)) {
-    const customFeatures = require(configInProject);
+    const customFeatures = importFresh(configInProject);
     features = { ...defaultFeatures, ...customFeatures };
   }
   return features[name];

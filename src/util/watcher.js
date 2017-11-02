@@ -2,15 +2,10 @@ import { hostname } from 'os';
 import SDC from 'statsd-client';
 
 const {
-  WATCHER_ENABLE,
   WATCHER_HOST,
   WATCHER_PORT,
-  WATCHER_PREFIX,
-  WATCHER_MACHINE_RECORD
+  WATCHER_PREFIX
 } = process.env;
-
-const fixedHostName = `.${hostname().replace('.', '_')}` || '.default';
-const hostName = WATCHER_MACHINE_RECORD === 'true' ? fixedHostName : '';
 
 const sdc = new SDC({
   host: WATCHER_HOST,
@@ -18,20 +13,22 @@ const sdc = new SDC({
   prefix: WATCHER_PREFIX
 });
 
-export const increment = (key, count) => {
-  if (WATCHER_ENABLE === 'true') {
-    sdc.increment(`${key + hostName}`, count);
+const getHostname = () => {
+  let hostName = '';
+  if (process.env.WATCHER_MACHINE_RECORD === 'true') {
+    hostName = `.${hostname().replace('.', '_')}`;
   }
+  return hostName;
+};
+
+export const increment = (key, count) => {
+  sdc.increment(`${key + getHostname()}`, count);
 };
 
 export const gauge = (key, count) => {
-  if (WATCHER_ENABLE === 'true') {
-    sdc.gauge(`${key + hostName}`, count);
-  }
+  sdc.gauge(`${key + getHostname()}`, count);
 };
 
 export const timing = (key, timer) => {
-  if (WATCHER_ENABLE === 'true') {
-    sdc.timing(`${key + hostName}`, timer);
-  }
+  sdc.timing(`${key + getHostname()}`, timer);
 };
