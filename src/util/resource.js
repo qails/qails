@@ -3,20 +3,8 @@ import Router from 'koa-router';
 import compose from 'koa-compose';
 import Collection from 'bookshelf/lib/collection';
 import { defaults, isFunction, compact, chunk, startsWith } from 'lodash';
-import { snake as snakeCase } from './magic-case';
-import envelope from './response-envelope';
-import { MODEL_MAGICCASE } from './features';
-
-const catchHandle = (e) => {
-  console.log(e);
-};
-
-const snake = (s) => {
-  if (MODEL_MAGICCASE) {
-    return snakeCase(s);
-  }
-  return s;
-};
+import { snake } from './magicCase';
+import envelope from './responseEnvelope';
 
 /**
  * @class
@@ -92,13 +80,10 @@ export default class ResourceRouter extends Router {
       createMiddleware = middleware;
     } else {
       createMiddleware = async (ctx, next) => {
-        const attributes = ctx.state.attributes || snake(ctx.request.body);
-        // if (collection(ctx).relatedData) {
-        //   ctx.state.resource = await collection(ctx).create(attributes);
-        // } else {
         ctx.state.resource = collection(ctx).model.forge();
+        const { magicCase } = ctx.state.resource;
+        const attributes = magicCase ? snake(ctx.request.body) : ctx.request.body;
         await ctx.state.resource.save(attributes);
-        // }
         await next();
         ctx.status = 201;
         ctx.body = envelope({
@@ -131,11 +116,13 @@ export default class ResourceRouter extends Router {
 
     // eslint-disable-next-line
     const listMiddleware = async (ctx, next) => {
-      const { embed, mask, page, pageSize, limit, offset } = ctx.query;
+      const { embed, withRelated, mask, page, pageSize, limit, offset } = ctx.query;
       const model = ctx.state.query || collection(ctx).model.forge();
 
       let { where, andWhere, orWhere, sort } = ctx.query;
       let fetchParams = { required: false };
+      let code = 0;
+      let message = 'Success';
       let result = {};
 
       if (model.magicCase) {
@@ -157,8 +144,8 @@ export default class ResourceRouter extends Router {
         }
       }
 
-      if (embed) {
-        fetchParams.withRelated = embed.split(',');
+      if (embed || withRelated) {
+        fetchParams.withRelated = (embed || withRelated).split(',');
       }
 
       if (where) {
@@ -223,51 +210,52 @@ export default class ResourceRouter extends Router {
         await model
           .fetchPage(fetchParams)
           .then((items) => {
-            if (items) {
-              if (mask) {
-                result = {
-                  pagination: items.pagination,
-                  list: items.mask(mask)
-                };
-              } else {
-                result = {
-                  pagination: items.pagination,
-                  list: items.toJSON()
-                };
-              }
+            // if (items) {
+            if (mask) {
+              result = {
+                pagination: items.pagination,
+                list: items.mask(mask)
+              };
+            } else {
+              result = {
+                pagination: items.pagination,
+                list: items.toJSON()
+              };
             }
+            // }
           })
-          .catch(catchHandle);
+          .catch((e) => {
+            code = 500;
+            message = e.toString();
+          });
       } else {
         await model
           .fetchAll(fetchParams)
           .then((items) => {
-            if (items) {
-              if (mask) {
-                result = items.mask(mask);
-              } else {
-                result = items.toJSON();
-              }
+            // if (items) {
+            if (mask) {
+              result = items.mask(mask);
+            } else {
+              result = items.toJSON();
             }
+            // }
           })
-          .catch(catchHandle);
+          .catch((e) => {
+            code = 500;
+            message = e.toString();
+          });
       }
 
       await next();
-
       ctx.status = 200;
-      ctx.body = envelope({
-        code: 0,
-        message: 'Success',
-        result
-      });
+      ctx.body = envelope({ code, message, result });
     };
 
     const itemMiddleware = async (ctx, next) => {
-      const { embed, mask } = ctx.query;
+      const { embed, mask, withRelated } = ctx.query;
       const fetchParams = { required: true };
-      if (embed) {
-        fetchParams.withRelated = embed.split(',');
+      if (embed || withRelated) {
+        fetchParams.withRelated = (embed || withRelated).split(',');
       }
 
       const item = await collection(ctx)
@@ -336,7 +324,8 @@ export default class ResourceRouter extends Router {
       updateMiddleware = middleware;
     } else {
       updateMiddleware = async (ctx, next) => {
-        const attributes = ctx.state.attributes || snake(ctx.request.body);
+        const { magicCase } = collection(ctx).model.forge();
+        const attributes = magicCase ? snake(ctx.request.body) : ctx.request.body;
         ctx.state.resource = (
           await collection(ctx)
             .query(q => q.where({ [id]: ctx.params[id] }))
