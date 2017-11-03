@@ -44,6 +44,21 @@ describe('snake()', () => {
     person.should.have.property('c_cc', 'ccc');
     person.should.have.property('d_dd_d', 'dddd');
   });
+  it('包含=号的字符串应该原样返回', () => {
+    const s = 'ab=c';
+    const name = snake(s);
+    name.should.eql(s);
+  });
+  it('包含>号的字符串应该原样返回', () => {
+    const s = 'ab>c';
+    const name = snake(s);
+    name.should.eql(s);
+  });
+  it('包含<号的字符串应该原样返回', () => {
+    const s = 'ab<c';
+    const name = snake(s);
+    name.should.eql(s);
+  });
 });
 
 describe('Plugin: magiccase', () => {
