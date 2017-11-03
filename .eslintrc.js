@@ -4,5 +4,8 @@ module.exports = {
   ].map(require.resolve),
   env: {
     mocha: true
+  },
+  rules: {
+    complexity: 0
   }
 };
