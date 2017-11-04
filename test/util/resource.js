@@ -414,7 +414,7 @@ describe('Resource.define()', () => {
       const test = request(app.listen());
       await test.post('/books').send({ id });
       const { body } = await test.get(`/books/${id}`);
-      should(body).be.not.undefined();
+      should(body).be.not.empty();
       body.should.have.property('id', id);
     });
   });

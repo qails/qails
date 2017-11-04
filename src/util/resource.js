@@ -1,8 +1,8 @@
-import { isObject } from 'util';
 import Router from 'koa-router';
 import compose from 'koa-compose';
-import { defaults, isFunction, compact, chunk, startsWith } from 'lodash';
+import { defaults, isFunction, compact } from 'lodash';
 import { snake } from './magicCase';
+import { fetchAll, fetchOne } from './fetch';
 
 /**
  * @class
@@ -33,7 +33,7 @@ export default class ResourceRouter extends Router {
     options = defaults(options, {
       name: tableName,
       prefix: '',
-      id: 'id',
+      // id: 'id',
       root: `/${tableName}`
     });
     super(options);
@@ -43,7 +43,7 @@ export default class ResourceRouter extends Router {
 
     this.pattern = {
       root: options.root,
-      item: `${options.root}/:${options.id}`
+      item: `${options.root}/:id`
     };
   }
 
@@ -64,11 +64,11 @@ export default class ResourceRouter extends Router {
       createMiddleware = async (ctx, next) => {
         const model = this.model.forge();
         const attributes = model.magicCase ? snake(ctx.request.body) : ctx.request.body;
-        await model.save(attributes);
+        const result = await model.save(attributes);
         ctx.status = 201;
         ctx.state.code = 0;
         ctx.state.message = 'Success';
-        ctx.body = ctx.state.resource;
+        ctx.body = result;
         await next();
       };
       options = middleware;
@@ -91,138 +91,9 @@ export default class ResourceRouter extends Router {
    */
   read(options) {
     this.methods.read = true;
-    const { options: { id }, pattern } = this;
+    const { pattern } = this;
     const listMiddleware = async (ctx, next) => {
-      const model = this.model.forge();
-      const { embed, withRelated, mask, page, pageSize, limit, offset } = ctx.query;
-
-      let { where, andWhere, orWhere, sort } = ctx.query;
-      let fetchParams = { required: false };
-      let code = 0;
-      let message = 'Success';
-      let result = {};
-
-      if (model.magicCase) {
-        if (sort) {
-          if (startsWith(sort, '-')) {
-            sort = `-${snake(sort.substr(1, sort.length))}`;
-          } else {
-            sort = snake(sort);
-          }
-        }
-        if (where) {
-          where = snake(where);
-        }
-        if (andWhere) {
-          andWhere = snake(andWhere);
-        }
-        if (orWhere) {
-          orWhere = snake(orWhere);
-        }
-      }
-
-      if (embed || withRelated) {
-        fetchParams.withRelated = (embed || withRelated).split(',');
-      }
-
-      if (where) {
-        // where=id\&where=\>\&where=1
-        if (Array.isArray(where)) {
-          chunk(where, 3).forEach((item) => {
-            // 确保拆分后的数组是一个完整的 where 条件
-            if (item.length === 3) {
-              model.query(...['where'].concat(item));
-            }
-          });
-        } else if (isObject(where)) {
-          // where[name]=sales
-          model.where(where);
-        }
-      }
-
-      if (orWhere) {
-        if (Array.isArray(orWhere)) {
-          chunk(orWhere, 3).forEach((item) => {
-            // 确保拆分后的数组是一个完整的 where 条件
-            if (item.length === 3) {
-              model.query(...['orWhere'].concat(item));
-            }
-          });
-        } else if (isObject(orWhere)) {
-          model.query({ orWhere });
-        }
-      }
-
-      if (andWhere) {
-        if (Array.isArray(andWhere)) {
-          chunk(andWhere, 3).forEach((item) => {
-            // 确保拆分后的数组是一个完整的 where 条件
-            if (item.length === 3) {
-              model.query(...['andWhere'].concat(item));
-            }
-          });
-        } else if (isObject(andWhere)) {
-          model.query({ andWhere });
-        }
-      }
-
-      // Order by support
-      if (sort) {
-        sort.split(',').forEach((field) => {
-          model.orderBy(field);
-        });
-      }
-
-      // Pagination support
-      if (page || pageSize || limit || offset) {
-        if (page || pageSize) {
-          fetchParams = {
-            page,
-            pageSize,
-            ...fetchParams
-          };
-        } else {
-          fetchParams = {
-            limit,
-            offset,
-            ...fetchParams
-          };
-        }
-
-        await model
-          .fetchPage(fetchParams)
-          .then((items) => {
-            if (mask) {
-              result = {
-                pagination: items.pagination,
-                list: items.mask(mask)
-              };
-            } else {
-              result = {
-                pagination: items.pagination,
-                list: items.toJSON()
-              };
-            }
-          })
-          .catch((e) => {
-            code = 500;
-            message = e.toString();
-          });
-      } else {
-        await model
-          .fetchAll(fetchParams)
-          .then((items) => {
-            if (mask) {
-              result = items.mask(mask);
-            } else {
-              result = items.toJSON();
-            }
-          })
-          .catch((e) => {
-            code = 500;
-            message = e.toString();
-          });
-      }
+      const { code, message, result } = await fetchAll(this.model, ctx.query);
 
       ctx.status = 200;
       ctx.state.code = code;
@@ -232,27 +103,16 @@ export default class ResourceRouter extends Router {
     };
 
     const itemMiddleware = async (ctx, next) => {
-      const model = this.model.forge();
-      const { embed, mask, withRelated } = ctx.query;
-      const fetchParams = { required: true };
-      if (embed || withRelated) {
-        fetchParams.withRelated = (embed || withRelated).split(',');
-      }
+      const { code, message, result } = await fetchOne(
+        this.model,
+        ctx.params.id,
+        ctx.query
+      );
 
-      // const item = await collection(ctx)
-      const item = await model
-        .query(q => q.where({ [id]: ctx.params.id }))
-        .fetch(fetchParams);
-
-      if (item) {
-        ctx.state.code = 0;
-        ctx.state.message = 'Success';
-        ctx.body = mask ? item.mask(mask) : item.toJSON();
-      } else {
-        ctx.state.code = 404;
-        ctx.state.message = 'Not found';
-      }
       ctx.status = 200;
+      ctx.state.code = code;
+      ctx.state.message = message;
+      ctx.body = result;
       await next();
     };
 
@@ -294,7 +154,7 @@ export default class ResourceRouter extends Router {
    * @return {Object}
    */
   update(middleware, options) {
-    const { options: { id }, pattern } = this;
+    const { pattern } = this;
     this.methods.update = true;
 
     let updateMiddleware = null;
@@ -305,16 +165,16 @@ export default class ResourceRouter extends Router {
         const model = this.model.forge();
         const attributes = model.magicCase ? snake(ctx.request.body) : ctx.request.body;
         const item = await model
-          .query(q => q.where({ [id]: ctx.params.id }))
+          .query(q => q.where({ [this.model.prototype.idAttribute]: ctx.params.id }))
           .fetch({ required: true });
         if (item) {
-          const updatedResource = await item.save(attributes, {
+          const result = await item.save(attributes, {
             method: 'update',
             patch: true
           });
           ctx.state.code = 0;
           ctx.state.message = 'Success';
-          ctx.body = updatedResource;
+          ctx.body = result;
         } else {
           ctx.state.code = 404;
           ctx.state.message = 'Not found';
@@ -344,7 +204,7 @@ export default class ResourceRouter extends Router {
    * @return {Object}
    */
   destroy(middleware, options) {
-    const { pattern, options: { id } } = this;
+    const { pattern } = this;
     this.methods.destroy = true;
 
     let deleteMiddleware = null;
@@ -354,7 +214,7 @@ export default class ResourceRouter extends Router {
       deleteMiddleware = async (ctx, next) => {
         const model = this.model.forge();
         const item = await model
-          .query(q => q.where({ [id]: ctx.params.id }))
+          .query(q => q.where({ [this.model.prototype.idAttribute]: ctx.params.id }))
           .fetch({ required: true });
         if (item) {
           ctx.body = await item.destroy();
