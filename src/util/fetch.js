@@ -4,7 +4,7 @@ import { snake } from './magicCase';
 
 export default '';
 
-export const fetchAll = async (Model, query = {}) => {
+export const fetchAll = async (Model, query) => {
   const model = Model.forge();
   const { embed, withRelated, mask, page, pageSize, limit, offset } = query;
   let { where, andWhere, orWhere, sort } = query;
@@ -137,7 +137,7 @@ export const fetchAll = async (Model, query = {}) => {
   return { code, message, result };
 };
 
-export const fetchOne = async (Model, id, query = {}) => {
+export const fetchOne = async (Model, id, query) => {
   const model = Model.forge();
   const { embed, mask, withRelated } = query;
   const fetchParams = { required: true };
