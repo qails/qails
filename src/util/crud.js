@@ -1,10 +1,9 @@
+/* eslint import/prefer-default-export: 0 */
 import { isObject } from 'util';
 import { chunk, startsWith } from 'lodash';
 import { snake } from './magicCase';
 
-export default '';
-
-export const fetchAll = async (Model, query) => {
+export const readList = async (Model, query) => {
   const model = Model.forge();
   const { embed, withRelated, mask, page, pageSize, limit, offset } = query;
   let { where, andWhere, orWhere, sort } = query;
@@ -137,7 +136,7 @@ export const fetchAll = async (Model, query) => {
   return { code, message, result };
 };
 
-export const fetchOne = async (Model, id, query) => {
+export const readItem = async (Model, id, query) => {
   const model = Model.forge();
   const { embed, mask, withRelated } = query;
   const fetchParams = { required: true };
@@ -161,5 +160,58 @@ export const fetchOne = async (Model, id, query) => {
     message = 'Not found';
   }
 
+  return { code, message, result };
+};
+
+export const createItem = async (Model, attributes) => {
+  const model = Model.forge();
+  if (model.magicCase) {
+    attributes = snake(attributes);
+  }
+  const item = await model.save(attributes);
+  return item.toJSON();
+};
+
+export const updateItem = async (Model, id, attributes) => {
+  const { idAttribute } = Model.prototype;
+  const model = Model.forge({ [idAttribute]: id });
+  if (model.magicCase) {
+    attributes = snake(attributes);
+  }
+  let code = 0;
+  let message = 'Success';
+  let result = {};
+  try {
+    result = (await model.save(attributes, {
+      method: 'update',
+      patch: false
+    })).toJSON();
+  } catch (e) {
+    if (e.message === 'No Rows Updated') {
+      code = 404;
+      message = 'Not found';
+    } else {
+      code = 500;
+      message = e.toString();
+      // throw e;
+    }
+  }
+  return { code, message, result };
+};
+
+export const deleteItem = async (Model, id) => {
+  const { idAttribute } = Model.prototype;
+  const model = Model.forge({ id });
+  let code = 0;
+  let message = 'Success';
+  let result = {};
+  const item = await model.query(q => q.where({ [idAttribute]: id })).fetch({ required: true });
+  if (item) {
+    result = item.toJSON();
+    await item.destroy();
+  } else {
+    code = 404;
+    message = 'Not found';
+  }
   return { code, message, result };
 };

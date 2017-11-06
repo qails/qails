@@ -1,8 +1,7 @@
 import Router from 'koa-router';
 import compose from 'koa-compose';
 import { defaults, isFunction, compact } from 'lodash';
-import { snake } from './magicCase';
-import { fetchAll, fetchOne } from './fetch';
+import { readList, readItem, createItem, updateItem, deleteItem } from './crud';
 
 /**
  * @class
@@ -62,9 +61,8 @@ export default class ResourceRouter extends Router {
       createMiddleware = middleware;
     } else {
       createMiddleware = async (ctx, next) => {
-        const model = this.model.forge();
-        const attributes = model.magicCase ? snake(ctx.request.body) : ctx.request.body;
-        const result = await model.save(attributes);
+        const attributes = ctx.request.body;
+        const result = await createItem(this.model, attributes);
         ctx.status = 201;
         ctx.state.code = 0;
         ctx.state.message = 'Success';
@@ -93,7 +91,7 @@ export default class ResourceRouter extends Router {
     this.methods.read = true;
     const { pattern } = this;
     const listMiddleware = async (ctx, next) => {
-      const { code, message, result } = await fetchAll(this.model, ctx.query);
+      const { code, message, result } = await readList(this.model, ctx.query);
 
       ctx.status = 200;
       ctx.state.code = code;
@@ -103,7 +101,7 @@ export default class ResourceRouter extends Router {
     };
 
     const itemMiddleware = async (ctx, next) => {
-      const { code, message, result } = await fetchOne(
+      const { code, message, result } = await readItem(
         this.model,
         ctx.params.id,
         ctx.query
@@ -162,23 +160,13 @@ export default class ResourceRouter extends Router {
       updateMiddleware = middleware;
     } else {
       updateMiddleware = async (ctx, next) => {
-        const model = this.model.forge();
-        const attributes = model.magicCase ? snake(ctx.request.body) : ctx.request.body;
-        const item = await model
-          .query(q => q.where({ [this.model.prototype.idAttribute]: ctx.params.id }))
-          .fetch({ required: true });
-        if (item) {
-          const result = await item.save(attributes, {
-            method: 'update',
-            patch: true
-          });
-          ctx.state.code = 0;
-          ctx.state.message = 'Success';
-          ctx.body = result;
-        } else {
-          ctx.state.code = 404;
-          ctx.state.message = 'Not found';
-        }
+        const { id } = ctx.params;
+        const attributes = ctx.request.body;
+        const { code, message, result } = await updateItem(this.model, id, attributes);
+
+        ctx.state.code = code;
+        ctx.state.message = message;
+        ctx.body = result;
         ctx.status = 202;
         await next();
       };
@@ -212,16 +200,13 @@ export default class ResourceRouter extends Router {
       deleteMiddleware = middleware;
     } else {
       deleteMiddleware = async (ctx, next) => {
-        const model = this.model.forge();
-        const item = await model
-          .query(q => q.where({ [this.model.prototype.idAttribute]: ctx.params.id }))
-          .fetch({ required: true });
-        if (item) {
-          ctx.body = await item.destroy();
-        } else {
-          ctx.state.code = 404;
-          ctx.state.message = 'Not found';
-        }
+        const { id } = ctx.params;
+        const { code, message, result } = await deleteItem(this.model, id);
+
+        ctx.state.code = code;
+        ctx.state.message = message;
+        ctx.body = result;
+
         ctx.status = 204;
         await next();
       };

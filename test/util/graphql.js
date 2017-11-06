@@ -5,7 +5,7 @@ import casual from 'casual';
 import { buildSchema } from 'graphql';
 import { Qails, base, Model } from '../../src';
 import graphql from '../../src/middlewares/graphql';
-import { fetchAll, fetchOne } from '../../src/util/graphql';
+import { fetchAll, fetchOne, create, update, destroy } from '../../src/util/graphql';
 
 const ROW_COUNT = 15;
 const TABLE_BOOKS = 'books';
@@ -90,23 +90,16 @@ describe('util::graphql', () => {
       return book;
     },
     createBook: async ({ input }) => {
-      const instance = Book.forge();
-      const book = await instance.save(input);
-      return book.toJSON();
+      const book = await create(Book, input);
+      return book;
     },
     updateBook: async ({ id, input }) => {
-      const instance = Book.forge({ id });
-      const book = await instance.save(input, {
-        method: 'update',
-        patch: true
-      });
-      return book.toJSON();
+      const book = await update(Book, id, input);
+      return book;
     },
     deleteBook: async ({ id }) => {
-      const instance = Book.forge({ id });
-      const data = instance.toJSON();
-      await instance.destroy();
-      return data;
+      const book = await destroy(Book, id);
+      return book;
     }
   };
 
@@ -178,11 +171,12 @@ describe('util::graphql', () => {
         name
       }
     }`;
+    const id = '1';
     const name = casual.word;
     const res = await request(app.listen()).post('/graphql').send({
       query,
       variables: {
-        id: 1,
+        id,
         input: {
           name
         }
@@ -193,6 +187,28 @@ describe('util::graphql', () => {
     updateBook.should.have.property('name', name);
   });
 
+  it('修改不存在的记录应该返回错误信息', async () => {
+    const query = `mutation UpdateBook($id: Int!, $input: BookInput) {
+      updateBook(id: $id, input: $input) {
+        id
+        name
+      }
+    }`;
+    const id = '100';
+    const name = casual.word;
+    const { body: { errors } } = await request(app.listen()).post('/graphql').send({
+      query,
+      variables: {
+        id,
+        input: {
+          name
+        }
+      }
+    });
+    should(errors).not.be.undefined();
+    errors.should.have.length(1);
+  });
+
   it('删除记录应该成功', async () => {
     const query = `mutation DeleteBook($id: Int!) {
       deleteBook(id: $id) {
@@ -201,10 +217,11 @@ describe('util::graphql', () => {
       }
     }`;
     const id = '1';
-    const { body: { data: { deleteBook } } } = await request(app.listen()).post('/graphql').send({
+    const res = await request(app.listen()).post('/graphql').send({
       query,
       variables: { id }
     });
+    const { body: { data: { deleteBook } } } = res;
     deleteBook.should.not.be.empty();
     deleteBook.should.have.property('id', id);
 

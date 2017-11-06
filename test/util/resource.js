@@ -2,7 +2,7 @@
 import should from 'should';
 import request from 'supertest';
 import mask from 'bookshelf-mask';
-import { range, first, last } from 'lodash';
+import { range, first, last, repeat } from 'lodash';
 import { base, Qails, Resource } from '../../src';
 import magicCase from '../../src/util/magicCase';
 import bodyParser from '../../src/middlewares/bodyParser';
@@ -32,7 +32,7 @@ before(async () => {
     .dropTableIfExists(TABLE_BOOKS)
     .createTable(TABLE_BOOKS, (table) => {
       table.increments();
-      table.string('name');
+      table.string('name', 20);
     })
     .dropTableIfExists(TABLE_CHAPTERS)
     .createTable(TABLE_CHAPTERS, (table) => {
@@ -423,6 +423,27 @@ describe('Resource.define()', () => {
     it('修改存在的记录应该返回修改后的记录', async () => {
       const id = 2;
       const name = 'name';
+      const test = request(app.listen());
+      await test.put(`/books/${id}`).send({ name });
+      const { body } = await test.get(`/books/${id}`);
+      should(body).be.not.undefined();
+      body.should.have.property('name', name);
+    });
+
+    it('传入不存在的字段时应该修改失败', async () => {
+      const id = 2;
+      const name = 'name';
+      const test = request(app.listen());
+      await test.put(`/books/${id}`).send({ name, xxx: 'xxx' });
+      const { body } = await test.get(`/books/${id}`);
+      // console.log(res.text);
+      should(body).be.not.undefined();
+      body.should.have.property('name', null);
+    });
+
+    it.skip('字段超长时应该修改失败', async () => {
+      const id = 2;
+      const name = repeat('*', 50);
       const test = request(app.listen());
       await test.put(`/books/${id}`).send({ name });
       const { body } = await test.get(`/books/${id}`);
