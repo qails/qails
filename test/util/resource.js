@@ -447,7 +447,9 @@ describe('Resource.define()', () => {
       const id = 2;
       const name = repeat('*', 50);
       const test = request(app.listen());
-      const { body: { code } } = await test.put(`/books/${id}`).send({ name });
+      const res = await test.put(`/books/${id}`).send({ name });
+      console.log(res);
+      const { body: { code } } = res;
       code.should.eql('ER_DATA_TOO_LONG');
     });
 
