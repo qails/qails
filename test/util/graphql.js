@@ -7,42 +7,42 @@ import { Qails, base, Model } from '../../src';
 import graphql from '../../src/middlewares/graphql';
 import { fetchAll, fetchOne, create, update, destroy } from '../../src/util/graphql';
 
-const ROW_COUNT = 15;
-const TABLE_BOOKS = 'books';
-const TABLE_CHAPTERS = 'chapters';
-
-before(async () => {
-  await base.knex.schema
-    .dropTableIfExists(TABLE_BOOKS)
-    .createTable(TABLE_BOOKS, (table) => {
-      table.increments();
-      table.string('name');
-    })
-    .dropTableIfExists(TABLE_CHAPTERS)
-    .createTable(TABLE_CHAPTERS, (table) => {
-      table.increments();
-      table.string('name');
-      table.integer('book_id');
-    });
-
-  const bookData = range(1, ROW_COUNT + 1).map(item => ({ id: item, name: casual.word }));
-  const chapterData = range(1, ROW_COUNT + 1).map(item => ({
-    id: item,
-    name: casual.word,
-    book_id: item
-  }));
-
-  await base.knex(TABLE_BOOKS).insert(bookData);
-  await base.knex(TABLE_CHAPTERS).insert(chapterData);
-});
-
-// after(async () => {
-//   await base.knex.schema
-//     .dropTableIfExists(TABLE_BOOKS)
-//     .dropTableIfExists(TABLE_CHAPTERS);
-// });
-
 describe('util::graphql', () => {
+  const ROW_COUNT = 15;
+  const TABLE_BOOKS = 'books';
+  const TABLE_CHAPTERS = 'chapters';
+
+  before(async () => {
+    await base.knex.schema
+      .dropTableIfExists(TABLE_BOOKS)
+      .createTable(TABLE_BOOKS, (table) => {
+        table.increments();
+        table.string('name');
+      })
+      .dropTableIfExists(TABLE_CHAPTERS)
+      .createTable(TABLE_CHAPTERS, (table) => {
+        table.increments();
+        table.string('name');
+        table.integer('book_id');
+      });
+
+    const bookData = range(1, ROW_COUNT + 1).map(item => ({ id: item, name: casual.word }));
+    const chapterData = range(1, ROW_COUNT + 1).map(item => ({
+      id: item,
+      name: casual.word,
+      book_id: item
+    }));
+
+    await base.knex(TABLE_BOOKS).insert(bookData);
+    await base.knex(TABLE_CHAPTERS).insert(chapterData);
+  });
+
+  after(async () => {
+    await base.knex.schema
+      .dropTableIfExists(TABLE_BOOKS)
+      .dropTableIfExists(TABLE_CHAPTERS);
+  });
+
   const Chapter = class extends Model {
     get tableName() { return 'chapters'; }
     get hasTimestamps() { return false; }
