@@ -445,10 +445,9 @@ describe('Resource.define()', () => {
 
     it('字段超长时应该修改返回服务器错误', async () => {
       const id = 2;
-      const name = repeat('*', 50);
+      const name = repeat('*', 5000);
       const test = request(app.listen());
       const res = await test.put(`/books/${id}`).send({ name });
-      console.log(res);
       const { body: { code } } = res;
       code.should.eql('ER_DATA_TOO_LONG');
     });
