@@ -1,3 +1,8 @@
+/**
+ * 本文件因编写周期跨度较长，分别使用了 async/await 和 promise 两种编码风格
+ * 有空时可以统一使用 async/await 方式重写
+ */
+
 /* eslint global-require: 0 */
 import should from 'should';
 import request from 'supertest';
@@ -108,15 +113,10 @@ describe('Resource.define()', () => {
             const { body } = await request(app.listen()).get('/books?where=id');
             body.should.have.length(ROW_COUNT);
           });
-          it('无记录返回', (done) => {
+          it('无记录返回', async () => {
             const id = -1;
-            request(app.listen())
-              .get(`/books?where[id]=${id}`)
-              .expect('Content-Type', /json/)
-              .expect(200, (err, res) => {
-                res.body.should.have.length(0);
-                return done();
-              });
+            const { body } = await request(app.listen()).get(`/books?where[id]=${id}`);
+            body.should.have.property('message', 'EmptyResponse');
           });
         });
         describe('andWhere', () => {
@@ -126,7 +126,7 @@ describe('Resource.define()', () => {
               .expect('Content-Type', /json/)
               .expect(200, (err, res) => {
                 const { body } = res;
-                body.should.have.length(0);
+                body.should.have.property('message', 'EmptyResponse');
                 return done();
               });
           });
@@ -135,7 +135,7 @@ describe('Resource.define()', () => {
               .get('/books?where[id]=2&andWhere=id&andWhere==&andWhere=3')
               .expect(200, (err, res) => {
                 const { body } = res;
-                body.should.have.length(0);
+                body.should.have.property('message', 'EmptyResponse');
                 return done();
               });
           });
@@ -395,15 +395,10 @@ describe('Resource.define()', () => {
           });
       });
 
-      it('获取一条不存在的记录', (done) => {
+      it('获取一条不存在的记录', async () => {
         const id = 100;
-        request(app.listen())
-          .get(`/books/${id}`)
-          .expect(200, (err, res) => {
-            const { body } = res;
-            body.should.be.empty();
-            return done();
-          });
+        const { body: { message } } = await request(app.listen()).get(`/books/${id}`);
+        message.should.eql('EmptyResponse');
       });
     });
   });
@@ -416,6 +411,14 @@ describe('Resource.define()', () => {
       const { body } = await test.get(`/books/${id}`);
       should(body).be.not.empty();
       body.should.have.property('id', id);
+    });
+
+    it('提交一个不存在的字段新增记录应该失败', async () => {
+      const id = ROW_COUNT + 1;
+      const test = request(app.listen());
+      const xxx = 'xxx';
+      const { body: { code } } = await test.post('/books').send({ id, xxx });
+      should(code).eql('ER_BAD_FIELD_ERROR');
     });
   });
 
@@ -436,28 +439,24 @@ describe('Resource.define()', () => {
       const test = request(app.listen());
       await test.put(`/books/${id}`).send({ name, xxx: 'xxx' });
       const { body } = await test.get(`/books/${id}`);
-      // console.log(res.text);
       should(body).be.not.undefined();
       body.should.have.property('name', null);
     });
 
-    it.skip('字段超长时应该修改失败', async () => {
+    it('字段超长时应该修改返回服务器错误', async () => {
       const id = 2;
       const name = repeat('*', 50);
       const test = request(app.listen());
-      await test.put(`/books/${id}`).send({ name });
-      const { body } = await test.get(`/books/${id}`);
-      should(body).be.not.undefined();
-      body.should.have.property('name', name);
+      const { body: { code } } = await test.put(`/books/${id}`).send({ name });
+      code.should.eql('ER_DATA_TOO_LONG');
     });
 
-    it('修改不存在的记录应该返回空对象', async () => {
+    it('修改不存在的记录应该返回服务器错误', async () => {
       const id = 100;
       const name = 'name';
       const test = request(app.listen());
-      const { body, status } = await test.put(`/books/${id}`).send({ name });
-      status.should.eql(202);
-      body.should.be.empty();
+      const { body: { message } } = await test.put(`/books/${id}`).send({ name });
+      message.should.eql('No Rows Updated');
     });
   });
 
@@ -466,19 +465,17 @@ describe('Resource.define()', () => {
       const id = 1;
       const test = request(app.listen());
       await test.delete(`/books/${id}`);
-      const { body } = await test.get(`/books/${id}`);
-      body.should.be.empty();
+      const { body: { message } } = await test.get(`/books/${id}`);
+      message.should.eql('EmptyResponse');
       const res = await test.get('/books');
       res.body.should.have.length(ROW_COUNT - 1);
     });
 
-    it('删除不存在的记录', async () => {
+    it('删除不存在的记录应该返回404', async () => {
       const id = 100;
       const test = request(app.listen());
-      const { body } = await test.delete(`/books/${id}`);
-      body.should.be.empty();
-      const res = await test.get('/books');
-      res.body.should.have.length(ROW_COUNT);
+      const { body: { message } } = await test.delete(`/books/${id}`);
+      message.should.eql('EmptyResponse');
     });
   });
 });

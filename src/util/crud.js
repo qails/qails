@@ -1,3 +1,8 @@
+/**
+ * 本文件封装对对象CRUD的公用方法，这些方法适用于 REST 和 GrapQL
+ * 本文件中所有方法不做异常处理，所有异常都抛到上层调用的文件（resource.js和graphql.js）中处理
+ */
+
 /* eslint import/prefer-default-export: 0 */
 import { isObject } from 'util';
 import { chunk, startsWith } from 'lodash';
@@ -7,9 +12,7 @@ export const readList = async (Model, query) => {
   const model = Model.forge();
   const { embed, withRelated, mask, page, pageSize, limit, offset } = query;
   let { where, andWhere, orWhere, sort } = query;
-  let fetchParams = { required: false };
-  let code = 0;
-  let message = 'Success';
+  let fetchParams = { require: true };
   let result = {};
 
   if (model.magicCase) {
@@ -83,6 +86,7 @@ export const readList = async (Model, query) => {
     });
   }
 
+  let items;
   // Pagination support
   if (page || pageSize || limit || offset) {
     if (page || pageSize) {
@@ -99,51 +103,20 @@ export const readList = async (Model, query) => {
       };
     }
 
-    await model
-      .fetchPage(fetchParams)
-      .then((items) => {
-        if (mask) {
-          result = {
-            pagination: items.pagination,
-            list: items.mask(mask)
-          };
-        } else {
-          result = {
-            pagination: items.pagination,
-            list: items.toJSON()
-          };
-        }
-      })
-      .catch((e) => {
-        code = 500;
-        message = e.toString();
-      });
+    items = await model.fetchPage(fetchParams);
+    result.pagination = items.pagination;
+    result.list = mask ? items.mask(mask) : items.toJSON();
   } else {
-    await model
-      .fetchAll(fetchParams)
-      .then((items) => {
-        if (mask) {
-          result = items.mask(mask);
-        } else {
-          result = items.toJSON();
-        }
-      })
-      .catch((e) => {
-        code = 500;
-        message = e.toString();
-      });
+    items = await model.fetchAll(fetchParams);
+    result = mask ? items.mask(mask) : items.toJSON();
   }
-  return { code, message, result };
+  return result;
 };
 
 export const readItem = async (Model, id, query) => {
   const model = Model.forge();
   const { embed, mask, withRelated } = query;
-  const fetchParams = { required: true };
-
-  let code = 0;
-  let message = 'Success';
-  let result = {};
+  const fetchParams = { require: true };
 
   if (embed || withRelated) {
     fetchParams.withRelated = (embed || withRelated).split(',');
@@ -153,14 +126,9 @@ export const readItem = async (Model, id, query) => {
     q => q.where({ [Model.prototype.idAttribute]: id })
   ).fetch(fetchParams);
 
-  if (item) {
-    result = mask ? item.mask(mask) : item.toJSON();
-  } else {
-    code = 404;
-    message = 'Not found';
-  }
+  const result = mask ? item.mask(mask) : item.toJSON();
 
-  return { code, message, result };
+  return result;
 };
 
 export const createItem = async (Model, attributes) => {
@@ -178,40 +146,18 @@ export const updateItem = async (Model, id, attributes) => {
   if (model.magicCase) {
     attributes = snake(attributes);
   }
-  let code = 0;
-  let message = 'Success';
-  let result = {};
-  try {
-    result = (await model.save(attributes, {
-      method: 'update',
-      patch: false
-    })).toJSON();
-  } catch (e) {
-    if (e.message === 'No Rows Updated') {
-      code = 404;
-      message = 'Not found';
-    } else {
-      code = 500;
-      message = e.toString();
-      // throw e;
-    }
-  }
-  return { code, message, result };
+  const item = await model.save(attributes, {
+    method: 'update',
+    patch: false
+  });
+  return item.toJSON();
 };
 
 export const deleteItem = async (Model, id) => {
   const { idAttribute } = Model.prototype;
   const model = Model.forge({ id });
-  let code = 0;
-  let message = 'Success';
-  let result = {};
-  const item = await model.query(q => q.where({ [idAttribute]: id })).fetch({ required: true });
-  if (item) {
-    result = item.toJSON();
-    await item.destroy();
-  } else {
-    code = 404;
-    message = 'Not found';
-  }
-  return { code, message, result };
+  const item = await model.query(q => q.where({ [idAttribute]: id })).fetch({ require: true });
+  const result = item.toJSON();
+  await item.destroy();
+  return result;
 };

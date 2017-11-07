@@ -10,5 +10,6 @@ export default async (ctx, next) => {
       json.data = body;
     }
     ctx.body = json;
+    ctx.status = 200;
   }
 };

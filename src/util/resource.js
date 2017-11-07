@@ -1,3 +1,10 @@
+/**
+ * ./crud.js到 REST APIs 的适配器文件
+ * 无论服务器是否发生错误，均返回 statusCode = 200
+ * 当使用 envelope 时，均返回 { code: 200, message: 'Success' }
+ * 错误信息会返回在 ctx.body 中，格式因错误类型不同而不同
+ */
+
 import Router from 'koa-router';
 import compose from 'koa-compose';
 import { defaults, isFunction, compact } from 'lodash';
@@ -32,7 +39,6 @@ export default class ResourceRouter extends Router {
     options = defaults(options, {
       name: tableName,
       prefix: '',
-      // id: 'id',
       root: `/${tableName}`
     });
     super(options);
@@ -62,11 +68,13 @@ export default class ResourceRouter extends Router {
     } else {
       createMiddleware = async (ctx, next) => {
         const attributes = ctx.request.body;
-        const result = await createItem(this.model, attributes);
-        ctx.status = 201;
         ctx.state.code = 0;
         ctx.state.message = 'Success';
-        ctx.body = result;
+        try {
+          ctx.body = await createItem(this.model, attributes);
+        } catch (e) {
+          ctx.body = e; // ctx.body 必须是一个对象
+        }
         await next();
       };
       options = middleware;
@@ -91,26 +99,24 @@ export default class ResourceRouter extends Router {
     this.methods.read = true;
     const { pattern } = this;
     const listMiddleware = async (ctx, next) => {
-      const { code, message, result } = await readList(this.model, ctx.query);
-
-      ctx.status = 200;
-      ctx.state.code = code;
-      ctx.state.message = message;
-      ctx.body = result;
+      ctx.state.code = 0;
+      ctx.state.message = 'Success';
+      try {
+        ctx.body = await readList(this.model, ctx.query);
+      } catch (e) {
+        ctx.body = e;
+      }
       await next();
     };
 
     const itemMiddleware = async (ctx, next) => {
-      const { code, message, result } = await readItem(
-        this.model,
-        ctx.params.id,
-        ctx.query
-      );
-
-      ctx.status = 200;
-      ctx.state.code = code;
-      ctx.state.message = message;
-      ctx.body = result;
+      ctx.state.code = 0;
+      ctx.state.message = 'Success';
+      try {
+        ctx.body = await readItem(this.model, ctx.params.id, ctx.query);
+      } catch (e) {
+        ctx.body = e;
+      }
       await next();
     };
 
@@ -162,12 +168,13 @@ export default class ResourceRouter extends Router {
       updateMiddleware = async (ctx, next) => {
         const { id } = ctx.params;
         const attributes = ctx.request.body;
-        const { code, message, result } = await updateItem(this.model, id, attributes);
-
-        ctx.state.code = code;
-        ctx.state.message = message;
-        ctx.body = result;
-        ctx.status = 202;
+        ctx.state.code = 0;
+        ctx.state.message = 'Success';
+        try {
+          ctx.body = await updateItem(this.model, id, attributes);
+        } catch (e) {
+          ctx.body = e;
+        }
         await next();
       };
       options = middleware;
@@ -201,13 +208,13 @@ export default class ResourceRouter extends Router {
     } else {
       deleteMiddleware = async (ctx, next) => {
         const { id } = ctx.params;
-        const { code, message, result } = await deleteItem(this.model, id);
-
-        ctx.state.code = code;
-        ctx.state.message = message;
-        ctx.body = result;
-
-        ctx.status = 204;
+        ctx.state.code = 0;
+        ctx.state.message = 'Success';
+        try {
+          ctx.body = await deleteItem(this.model, id);
+        } catch (e) {
+          ctx.body = e;
+        }
         await next();
       };
       options = middleware;
