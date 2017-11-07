@@ -444,7 +444,7 @@ describe('util::resource', () => {
         body.should.have.property('name', null);
       });
 
-      it('字段超长时应该修改返回服务器错误', async () => {
+      it.skip('字段超长时应该修改返回服务器错误', async () => {
         const id = 2;
         const name = repeat('*', 50);
         const test = request(app.listen());
