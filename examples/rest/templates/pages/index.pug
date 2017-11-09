@@ -1,0 +1,78 @@
+extends ../layout/default.pug
+
+block title
+  title REST API
+
+block append style
+  link(type="text/css" rel="stylesheet" href="css/index.css")
+
+block append script
+  script(src="jquery.min.js")
+  script(src="js/index.js")
+
+block content
+  -
+    var endpoints = [
+      { url: '/users' },
+      { url: '/users?mask=name' },
+      { url: '/users?withRelated=posts' },
+      { url: '/users?page=2' },
+      { url: '/users?page=2&pageSize=3' },
+      { url: '/users?offset=2' },
+      { url: '/users?offset=2&limit=3' },
+      { url: '/users?sort=-id' },
+      { url: '/users?sort=name,id' },
+      { url: '/users?where[id]=10' },
+      { url: '/users?where=id&where=>&where=12' },
+      { url: '/users?where=id&where=>&where=8&andWhere=name&andWhere=like&andWhere=%a%' },
+      { url: '/users?where=id&where=>&where=8&orWhere=name&orWhere=like&orWhere=%a%' },
+      { url: '/users/1' },
+      { url: '/users/1?withRelated=posts' },
+      { url: '/users/1', type: 'PUT', data: { name: 'put updated name' } },
+      { url: '/users/1', type: 'PATCH', data: { name: 'patch updated name' } },
+      { url: '/users/1', type: 'DELETE' },
+      { url: '/users', type: 'POST', data: { name: 'new name' } }
+    ];
+
+  h1 REST API
+  | 可以点击“接口列表”的链接查看接口返回，也可以使用请求构造器构造请求。
+  form#topBanner
+    fieldset
+      legend 请求构造器
+      table.builder
+        tr
+          th 提交方式
+          th 接口地址
+          th 提交数据
+          th
+        tr
+          td
+            select#verb
+              option(value="GET") GET
+              option(value="POST") POST
+              option(value="PUT") PUT
+              option(value="PATCH") PATCH
+              option(value="DELETE") DELETE
+          td
+            textarea#url
+          td
+            textarea#data
+          td
+            input#send(type="button" value="提交")
+  #root
+    #leftSide
+      h2 接口列表
+      ul
+        each endpoint in endpoints
+          li
+            | #{endpoint.type}
+            a(href!=endpoint.url data-type=endpoint.type data-data=endpoint.data) #{endpoint.url}
+    #rightSide
+      h2 HTTP响应
+      #response
+        .header
+          h3 响应消息体
+          textarea
+        .body
+          h3 响应消息头
+          textarea

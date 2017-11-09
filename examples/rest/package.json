@@ -1,0 +1,15 @@
+{
+  "name": "rest",
+  "scripts": {
+    "start": "babel-node server.js",
+    "seed": "babel-node scripts/seed.js"
+  },
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "jquery": "^3.2.1",
+    "qails": "*"
+  },
+  "devDependencies": {
+    "casual": "^1.5.17"
+  }
+}

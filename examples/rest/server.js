@@ -1,0 +1,2 @@
+import './dotenv';
+import './app';

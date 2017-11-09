@@ -1,15 +1,16 @@
-import { Qails } from '../../src';
-
-const { PORT } = process.env;
+const { Qails } = require('qails');
 
 const app = new Qails();
+app.use(async (ctx, next) => {
+  ctx.body = 'Hello world';
+  await next();
+});
 
-app.listen(PORT, (err) => {
+const port = 12345;
+app.listen(port, (err) => {
   if (err) {
     throw err;
   }
 
-  console.log(`✅ qails listening on port ${PORT}`);
+  console.log(`✅ qails listening on port ${port}`);
 });
-
-export default app;

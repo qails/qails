@@ -1,15 +1,15 @@
-import { Model } from '../../..';
+const { Model } = require('qails');
 
 /**
- * @class Config
+ * @class Post
  */
-export default class Config extends Model {
+export default class Post extends Model {
   /**
    * @method 表名称
    * @return {string}
    */
   get tableName() {
-    return 'configs';
+    return 'posts';
   }
 
   /**

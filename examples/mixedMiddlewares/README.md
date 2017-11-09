@@ -1,0 +1,9 @@
+# Mixed Buildin Middlewares
+
+本例演示如何在 qails 混合使用内置中间件和自定义中间件。
+
+在当前目录运行下面的命令，服务启动后访问 `http://localhost:12345` 即可看到效果。
+
+```
+npm install && npm start
+```
