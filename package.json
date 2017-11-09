@@ -2,7 +2,7 @@
   "name": "qails",
   "version": "2.3.10",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
-  "repository": "qailsjs/qails",
+  "repository": "qails/qails",
   "main": "dist/index.js",
   "bin": {
     "babel": "./node_modules/.bin/babel",
@@ -35,7 +35,6 @@
     "test": "mocha",
     "cover": "nyc npm test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls",
-    "example:helloworld": "babel-node examples/helloworld/",
     "pre-commit": "npm run lint && npm run test"
   },
   "dependencies": {
@@ -81,6 +80,7 @@
     "packing-glob": "^1.0.1",
     "require-all": "^2.2.0",
     "rimraf": "^2.6.2",
+    "semver": "^5.4.1",
     "statsd-client": "^0.4.0",
     "uuid": "^3.1.0"
   },

@@ -1,5 +1,18 @@
+import semver from 'semver';
 import Koa from 'koa';
 import qs from 'koa-qs';
+import { name, version, engines } from '../package.json';
+
+const checkNodeVersion = () => {
+  const enginesNode = engines.node;
+  const localNode = process.versions.node;
+
+  if (!semver.satisfies(localNode, enginesNode)) {
+    const error = `⚠️ ${name}@${version} requires node ${enginesNode} but ${localNode} was installed.`;
+    console.log(error);
+  }
+};
+checkNodeVersion();
 
 export default class Qails {
   constructor(middlewares = []) {
