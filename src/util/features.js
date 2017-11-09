@@ -6,10 +6,10 @@ import { resolve } from 'path';
 import importFresh from 'import-fresh';
 
 export default (name) => {
-  const { DOCUMENT_ROOT } = process.env;
+  const { DOCUMENT_ROOT = 'src' } = process.env;
   const filename = 'config/model.js';
   const configInQails = resolve(__dirname, `../${filename}`);
-  const configInProject = resolve(process.cwd(), DOCUMENT_ROOT, filename);
+  const configInProject = resolve(DOCUMENT_ROOT, filename);
   const defaultFeatures = require(configInQails);
   // eslint-disable-next-line
   let features = defaultFeatures;
