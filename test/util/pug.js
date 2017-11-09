@@ -11,7 +11,7 @@ describe('util::pug', () => {
 
   it('应该正确的从模版字符串返回解析后的HTML', (done) => {
     const app = new Qails();
-    pug(app.koa);
+    pug(app);
     app.use(async (ctx) => {
       ctx.render(templateString, { name }, { fromString: true });
     });
@@ -26,7 +26,7 @@ describe('util::pug', () => {
     writeFileSync(template, '| #{name}');
 
     const app = new Qails();
-    pug(app.koa, { viewPath: '.tmp' });
+    pug(app, { viewPath: '.tmp' });
     app.use(async (ctx) => {
       ctx.render(filename, { name });
     });

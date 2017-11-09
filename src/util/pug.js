@@ -5,5 +5,5 @@ export default (app, options) => {
     viewPath: 'templates',
     ...options
   });
-  pug.use(app);
+  pug.use(app.koa);
 };
