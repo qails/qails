@@ -88,6 +88,6 @@ if (features('MODEL_SOFTDELETE')) {
 
 // 外部可以base.knex取到knex client
 export default base;
-export const knex = knexInstance;
+// export const knex = knexInstance;
 export const Model = base.Model;
-export const Collection = base.Collection;
+// export const Collection = base.Collection;
