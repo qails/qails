@@ -6,7 +6,7 @@ import mkdirp from 'mkdirp';
 export default (fileStream, morganFormat, morganOptions) => {
   const { root, filename, dateFormat, frequency, verbose } = {
     ...{
-      root: resolve(process.cwd(), 'logs'),
+      root: resolve('logs'),
       filename: 'access__%DATE%.log',
       // http://momentjs.com/docs/#/displaying/format/
       dateFormat: 'YYYYMMDD',

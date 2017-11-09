@@ -8,7 +8,7 @@ import { Qails } from '../../src';
 import accessLog from '../../src/middlewares/accessLog';
 
 describe('middlewares::accessLog', () => {
-  const logRoot = resolve(process.cwd(), 'logs');
+  const logRoot = resolve('logs');
   const timestamp = moment().format('YYYYMMDD');
   const filename = 'access__%DATE%.log';
   const fullPath = resolve(logRoot, filename).replace('%DATE%', timestamp);
@@ -40,7 +40,7 @@ describe('middlewares::accessLog', () => {
   });
 
   it('应该在指定位置生成日志文件', (done) => {
-    const customLogRoot = resolve(process.cwd(), '.tmp', 'logs');
+    const customLogRoot = resolve('.tmp', 'logs');
     const customFilename = '%DATE%.log';
     const customDateFormat = moment().format('YYYY-MM-DD-HH');
     const customFullPath = resolve(customLogRoot, customFilename).replace('%DATE%', customDateFormat);

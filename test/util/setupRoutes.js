@@ -8,7 +8,7 @@ import setupRoutes from '../../src/util/setupRoutes';
 
 describe('util::setupRoutes', () => {
   const filename = 'index.js';
-  const root = resolve('.tmp', 'routes');
+  const root = resolve('.tmp', 'routers');
   const sub = resolve(root, 'sub');
   const endpointRoot = '/';
   const endpointSub = '/sub';
@@ -29,18 +29,31 @@ describe('util::setupRoutes', () => {
   const subRouter = resolve(sub, filename);
   writeFileSync(subRouter, getText(endpointSub));
 
-  it('设置不存在的routes目录应该报错', () => {
+  it('设置不存在的routers目录应该报错', () => {
     const app = new Qails();
     try {
       setupRoutes(app);
       should.fail();
     } catch (e) {
-      e.should.have.property('errno', -2);
+      e.toString().should.containEql('No such file or directory');
     }
   });
 
+  it('不设置DOCUMENT_ROOT时应该使用\'src/routers\'作为路由文件目录', () => {
+    const app = new Qails();
+    const originValue = process.env.DOCUMENT_ROOT;
+    delete process.env.DOCUMENT_ROOT;
+    try {
+      setupRoutes(app);
+      should.fail();
+    } catch (e) {
+      e.toString().should.containEql('src/routers');
+    }
+    process.env.DOCUMENT_ROOT = originValue;
+  });
+
   const app = new Qails();
-  const dirname = resolve(process.cwd(), '.tmp/routes');
+  const dirname = resolve('.tmp/routers');
   setupRoutes(app, dirname);
 
   it('一级目录路由解析应该正常', (done) => {

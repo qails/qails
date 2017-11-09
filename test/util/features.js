@@ -11,9 +11,17 @@ describe('模型特征配置', () => {
     should(features('MODEL_REGISTRY')).be.false();
   });
 
+  it('没有设置DOCUMENT_ROOT时应该使用src作为DOCUMENT_ROOT的值', () => {
+    const originValue = process.env.DOCUMENT_ROOT;
+    delete process.env.DOCUMENT_ROOT;
+    const features = require('../../src/util/features').default;
+    features('MODEL_REGISTRY').should.be.false();
+    process.env.DOCUMENT_ROOT = originValue;
+  });
+
   it('项目中存在配置文件且包含配置项时，应该使用配置文件中的配置', () => {
     const root = '.tmp';
-    const configFolder = path.resolve(process.cwd(), root, 'config');
+    const configFolder = path.resolve(root, 'config');
     const modelConfig = path.resolve(configFolder, 'model.js');
     const originValue = process.env.DOCUMENT_ROOT;
     fs.ensureDirSync(configFolder);
@@ -37,7 +45,7 @@ describe('模型特征配置', () => {
 
   it('所有选项设置为true时Model应该初始化正常', () => {
     const root = '.tmp/true';
-    const configFolder = path.resolve(process.cwd(), root, 'config');
+    const configFolder = path.resolve(root, 'config');
     const modelConfig = path.resolve(configFolder, 'model.js');
     const originValue = process.env.DOCUMENT_ROOT;
     fs.ensureDirSync(configFolder);
@@ -66,7 +74,7 @@ describe('模型特征配置', () => {
 
   it('所有选项设置为false时Model应该初始化正常', () => {
     const root = '.tmp/false';
-    const configFolder = path.resolve(process.cwd(), root, 'config');
+    const configFolder = path.resolve(root, 'config');
     const modelConfig = path.resolve(configFolder, 'model.js');
     const originValue = process.env.DOCUMENT_ROOT;
     fs.ensureDirSync(configFolder);
