@@ -1,10 +1,14 @@
-.DS_Store
-/npm-debug.log
+# 工程下根目录下的以下文件或目录忽略
 /.nyc_output
 /dist/
-/node_modules/
-/yarn-error.log
-/test/.tmp/
 /coverage/
+
+# 任何目录名或文件名为以下都忽略
+.DS_Store
+yarn-error.log
+npm-debug.log
+yarn.lock
+package-lock.json
 logs/
+node_modules/
 .tmp/
