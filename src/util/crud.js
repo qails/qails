@@ -4,7 +4,7 @@
  */
 
 /* eslint import/prefer-default-export: 0 */
-import { isObject } from 'util';
+import { isObject, isFunction } from 'util';
 import { chunk, startsWith } from 'lodash';
 import { snake } from './magicCase';
 
@@ -105,10 +105,10 @@ export const readList = async (Model, query) => {
 
     items = await model.fetchPage(fetchParams);
     result.pagination = items.pagination;
-    result.list = mask ? items.mask(mask) : items.toJSON();
+    result.list = mask && isFunction(items.mask) ? items.mask(mask) : items.toJSON();
   } else {
     items = await model.fetchAll(fetchParams);
-    result = mask ? items.mask(mask) : items.toJSON();
+    result = mask && isFunction(items.mask) ? items.mask(mask) : items.toJSON();
   }
   return result;
 };
