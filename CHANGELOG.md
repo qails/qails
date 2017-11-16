@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.0.0-alpha.0"></a>
+# [3.0.0-alpha.0](https://github.com/qails/qails/compare/v2.3.10...v3.0.0-alpha.0) (2017-11-16)
+
+
+### Bug Fixes
+
+* Fix test error ([ffaabac](https://github.com/qails/qails/commit/ffaabac))
+* 为DOCUMENT_ROOT环境变量设置默认值src，避免无该环境变量时qails应用无法启动的问题 ([24ff9a5](https://github.com/qails/qails/commit/24ff9a5))
+
+
+### Features
+
+* 为查询关联模型embed参数增加别名withRelated ([72dc91f](https://github.com/qails/qails/commit/72dc91f))
+* 修改resource构造函数参数，将collection参数改成model ([0e0ab05](https://github.com/qails/qails/commit/0e0ab05))
+* 修改了Qails构造函数，初始化参数传递更加灵活 ([74eb5d1](https://github.com/qails/qails/commit/74eb5d1))
+* 增加对低版本node提示 ([8f112c7](https://github.com/qails/qails/commit/8f112c7))
+* 将envelope改成中间件模式，增加代码的灵活性 ([af569b7](https://github.com/qails/qails/commit/af569b7))
+* 新增graphql中间件 ([a59390e](https://github.com/qails/qails/commit/a59390e))
+
+
+### Performance Improvements
+
+* 增加了异常捕捉和输出，系统稳定性进一步得到提升 ([c8eb245](https://github.com/qails/qails/commit/c8eb245))
+
+
+
 <a name="2.3.10"></a>
 ## [2.3.10](https://github.com/qailsjs/qails/compare/v2.3.9...v2.3.10) (2017-10-25)
 
