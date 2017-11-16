@@ -1,6 +1,7 @@
 /**
  * 配置 bookshelf 模型具有的特性
  * 实际上是通过该配置决定使用哪些 bookshelf 插件
+ * 可以在工程下新建 DOCUMENT_ROOT/config/model.js 来覆盖本配置
  */
 
 module.exports = {
