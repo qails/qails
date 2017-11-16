@@ -1,0 +1,6 @@
+{
+  "name": "commonProfile",
+  "dependencies": {
+    "qails": "*"
+  }
+}
