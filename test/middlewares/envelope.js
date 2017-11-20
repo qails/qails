@@ -1,7 +1,6 @@
 import request from 'supertest';
 import should from 'should';
-import { Qails } from '../../src';
-import envelope from '../../src/middlewares/envelope';
+import { Qails, envelopeMiddleware } from '../../src';
 
 describe('middlewares::envelope', () => {
   const hello = 'hello';
@@ -18,7 +17,7 @@ describe('middlewares::envelope', () => {
   };
 
   it('输出内容应该不包含data节点', async () => {
-    const app = new Qails(envelope);
+    const app = new Qails(envelopeMiddleware);
     app.use(first);
     const { body } = await request(app.listen()).get('/');
     body.should.have.property('code', stateCode);
@@ -35,7 +34,7 @@ describe('middlewares::envelope', () => {
   });
 
   it('应该原样输出ctx.body内容', (done) => {
-    const app = new Qails(envelope);
+    const app = new Qails(envelopeMiddleware);
     app.use(second);
     request(app.listen())
       .get('/')
@@ -43,7 +42,7 @@ describe('middlewares::envelope', () => {
   });
 
   it('应该输出带信封的ctx.body内容', (done) => {
-    const app = new Qails(envelope);
+    const app = new Qails(envelopeMiddleware);
     app.use(first);
     app.use(second);
     request(app.listen())

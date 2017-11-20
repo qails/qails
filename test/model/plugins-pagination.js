@@ -7,7 +7,7 @@ const modelOptions = {
   hasTimestamps: false
 };
 
-describe('Plugin: pagination', () => {
+describe('plugin::pagination', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_NAME)

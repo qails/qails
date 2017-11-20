@@ -1,7 +1,6 @@
 import request from 'supertest';
 // import should from 'should';
-import { Qails } from '../../src';
-import session from '../../src/util/session';
+import { Qails, session } from '../../src';
 
 describe('util::session', () => {
   const app = new Qails();

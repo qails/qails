@@ -1,7 +1,6 @@
 import request from 'supertest';
 import should from 'should';
-import { Qails } from '../../src';
-import cors from '../../src/middlewares/cors';
+import { Qails, corsMiddleware } from '../../src';
 
 describe('middlewares::cors', () => {
   it('响应头中应该不包含access-control-allow-origin', (done) => {
@@ -15,7 +14,7 @@ describe('middlewares::cors', () => {
   });
 
   it('响应头中应该包含access-control-allow-origin', (done) => {
-    const app = new Qails(cors());
+    const app = new Qails(corsMiddleware());
     request(app.listen())
       .get('/')
       .expect('access-control-allow-origin', '*')

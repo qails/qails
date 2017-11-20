@@ -1,7 +1,6 @@
 import request from 'supertest';
 // import should from 'should';
-import { Qails } from '../../src';
-import prettyJson from '../../src/middlewares/prettyJson';
+import { Qails, prettyJsonMiddleware } from '../../src';
 
 describe('middlewares::prettyJson', () => {
   it('应该返回JSON数据原始格式', (done) => {
@@ -14,7 +13,7 @@ describe('middlewares::prettyJson', () => {
   });
 
   it('应该返回美化后的JSON数据', (done) => {
-    const app = new Qails(prettyJson());
+    const app = new Qails(prettyJsonMiddleware());
     app.use(async (ctx) => { ctx.body = { foo: 'bar' }; });
     request(app.listen())
       .get('/')

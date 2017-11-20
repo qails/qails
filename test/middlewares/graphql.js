@@ -1,8 +1,7 @@
 import request from 'supertest';
 import should from 'should';
 import { buildSchema } from 'graphql';
-import { Qails } from '../../src';
-import graphql from '../../src/middlewares/graphql';
+import { Qails, graphqlMiddleware } from '../../src';
 
 describe('middlewares::graphql', () => {
   const schema = buildSchema(`
@@ -16,7 +15,7 @@ describe('middlewares::graphql', () => {
   };
 
   const app = new Qails([
-    graphql({
+    graphqlMiddleware({
       schema,
       rootValue: root
     })
@@ -45,7 +44,7 @@ describe('middlewares::graphql', () => {
   it('自定义endpoint时应该正常返回数据', async () => {
     const endpoint = '/gql';
     const customApp = new Qails([
-      graphql({
+      graphqlMiddleware({
         endpoint,
         schema,
         rootValue: root
@@ -59,7 +58,7 @@ describe('middlewares::graphql', () => {
     const originValue = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
     const customApp = new Qails([
-      graphql({
+      graphqlMiddleware({
         schema,
         rootValue: root
       })

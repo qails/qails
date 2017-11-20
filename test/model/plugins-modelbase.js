@@ -9,7 +9,7 @@ const modelOptions = {
   tableName: TABLE_NAME
 };
 
-describe('Plugin: modelbase', () => {
+describe('plugin::modelbase', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_NAME)

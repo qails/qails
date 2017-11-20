@@ -12,7 +12,7 @@ const modelOptionsEnablePlugin = {
   ...modelOptionsDisablePlugin
 };
 
-describe('Plugin: visibility', () => {
+describe('plugin::visibility', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_NAME)

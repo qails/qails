@@ -9,7 +9,7 @@ const TABLE_COMMENTS = 'comments';
 
 const id = 1;
 
-describe('Plugin: paranoia', () => {
+describe('plugin::paranoia', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_USERS)

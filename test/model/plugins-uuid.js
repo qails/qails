@@ -14,7 +14,7 @@ const modelOptionsEnablePlugin = {
   ...modelOptionsDisablePlugin
 };
 
-describe('Plugin: uuid', () => {
+describe('plugin::uuid', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_NAME)

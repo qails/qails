@@ -1,7 +1,6 @@
 import request from 'supertest';
 import should from 'should';
-import { Qails } from '../../src';
-import bodyParser from '../../src/middlewares/bodyParser';
+import { Qails, bodyParserMiddleware } from '../../src';
 
 describe('middlewares::bodyParser', () => {
   it('request.body应该取不到任何数据', (done) => {
@@ -18,7 +17,7 @@ describe('middlewares::bodyParser', () => {
 
   it('request.body应该取到PUT数据', (done) => {
     const id = 1;
-    const app = new Qails(bodyParser());
+    const app = new Qails(bodyParserMiddleware());
     app.use(async (ctx) => { ctx.body = ctx.request.body; });
     request(app.listen())
       .put('/')

@@ -19,7 +19,7 @@ const modelOptions = {
   }
 };
 
-describe('snake()', () => {
+describe('util::snake', () => {
   it('字符串返回', () => {
     const name = snake('aB');
     name.should.eql('a_b');
@@ -61,7 +61,7 @@ describe('snake()', () => {
   });
 });
 
-describe('Plugin: magiccase', () => {
+describe('plugin::magiccase', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_USERS)

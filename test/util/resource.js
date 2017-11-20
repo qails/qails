@@ -8,9 +8,8 @@ import should from 'should';
 import request from 'supertest';
 import mask from 'bookshelf-mask';
 import { range, first, last, repeat } from 'lodash';
-import { base, Qails, Resource } from '../../src';
+import { base, Qails, Resource, bodyParserMiddleware } from '../../src';
 import magicCase from '../../src/util/magicCase';
-import bodyParser from '../../src/middlewares/bodyParser';
 
 describe('util::resource', () => {
   const ROW_COUNT = 15;
@@ -64,7 +63,7 @@ describe('util::resource', () => {
   });
 
   describe('Resource.define()', () => {
-    const app = new Qails(bodyParser());
+    const app = new Qails(bodyParserMiddleware());
     app.use(Resource.define(Book).routes());
 
     describe('查询', () => {
@@ -496,7 +495,7 @@ describe('util::resource', () => {
       ctx.body = bodyText;
       await next();
     };
-    const app = new Qails(bodyParser());
+    const app = new Qails(bodyParserMiddleware());
     const resource = Resource.define(Book, {
       setup(router) {
         router
@@ -579,7 +578,7 @@ describe('util::resource', () => {
   });
 
   describe('自定义初始化参数', async () => {
-    const app = new Qails(bodyParser());
+    const app = new Qails(bodyParserMiddleware());
     const resource = Resource.define(Book, {
       id: 'id',
       root: '/api/books'
@@ -609,7 +608,7 @@ describe('util::resource', () => {
       get tableName() { return TABLE_BOOKS; }
       get hasTimestamps() { return false; }
     };
-    const app = new Qails(bodyParser());
+    const app = new Qails(bodyParserMiddleware());
     app.use(Resource.define(BookWithoutPlugin).routes());
 
     it('应该新增记录成功', (done) => {

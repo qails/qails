@@ -4,7 +4,7 @@ import { base } from '../../src';
 
 const TABLE_NAME = 'jsoncolumns';
 
-describe('Plugin: jsoncolumns', () => {
+describe('plugin::jsoncolumns', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_NAME)

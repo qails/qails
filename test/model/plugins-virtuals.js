@@ -8,7 +8,7 @@ const modelOptions = {
   }
 };
 
-describe('Plugin: Virtuals', () => {
+describe('plugin::Virtuals', () => {
   describe('禁用插件时', () => {
     const Person = base.Model.extend(modelOptions);
 

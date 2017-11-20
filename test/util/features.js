@@ -5,7 +5,7 @@ import path from 'path';
 import should from 'should';
 import importFresh from 'import-fresh';
 
-describe('模型特征配置', () => {
+describe('util::features', () => {
   it('项目中没有配置文件时，使用qails默认配置', () => {
     const features = require('../../src/util/features').default;
     should(features('MODEL_REGISTRY')).be.false();

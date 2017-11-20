@@ -6,7 +6,7 @@ const TABLE_USERS = 'users';
 const TABLE_POSTS = 'posts';
 const TABLE_COMMENTS = 'comments';
 
-describe('Plugin: cascadedelete', () => {
+describe('plugin::cascadedelete', () => {
   before(async () => {
     await base.knex.schema
       .dropTableIfExists(TABLE_USERS)

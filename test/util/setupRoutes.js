@@ -3,8 +3,7 @@ import should from 'should';
 import { writeFileSync } from 'fs';
 import { ensureDirSync, removeSync } from 'fs-extra';
 import { resolve } from 'path';
-import { Qails } from '../../src';
-import setupRoutes from '../../src/util/setupRoutes';
+import { Qails, setupRoutes } from '../../src';
 
 describe('util::setupRoutes', () => {
   const filename = 'index.js';

@@ -4,8 +4,7 @@ import { existsSync, statSync, readFileSync } from 'fs';
 import { removeSync } from 'fs-extra';
 import { resolve } from 'path';
 import moment from 'moment';
-import { Qails } from '../../src';
-import accessLog from '../../src/middlewares/accessLog';
+import { Qails, accessLogMiddleware } from '../../src';
 
 describe('middlewares::accessLog', () => {
   const logRoot = resolve('logs');
@@ -27,7 +26,7 @@ describe('middlewares::accessLog', () => {
 
   it('日志默认目录应该存在日志文件', (done) => {
     removeSync(logRoot);
-    const app = new Qails(accessLog());
+    const app = new Qails(accessLogMiddleware());
     request(app.listen())
       .get('/')
       .end(() => {
@@ -46,7 +45,7 @@ describe('middlewares::accessLog', () => {
     const customFullPath = resolve(customLogRoot, customFilename).replace('%DATE%', customDateFormat);
 
     removeSync(customLogRoot);
-    const app = new Qails(accessLog({
+    const app = new Qails(accessLogMiddleware({
       root: customLogRoot,
       filename: customFilename,
       dateFormat: 'YYYY-MM-DD-HH',
@@ -65,7 +64,7 @@ describe('middlewares::accessLog', () => {
 
   it('应该生成指定格式的日志记录', (done) => {
     removeSync(logRoot);
-    const app = new Qails(accessLog({}, ':status'));
+    const app = new Qails(accessLogMiddleware({}, ':status'));
     request(app.listen())
       .get('/')
       .end(() => {

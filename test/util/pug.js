@@ -2,8 +2,7 @@ import request from 'supertest';
 import { writeFileSync, unlinkSync } from 'fs';
 import { resolve, basename } from 'path';
 import should from 'should';
-import { Qails } from '../../src';
-import pug from '../../src/util/pug';
+import { Qails, pug } from '../../src';
 
 describe('util::pug', () => {
   const name = basename(__filename);
