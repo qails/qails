@@ -1,6 +1,5 @@
 export { default as Qails } from './qails';
 export { default as Resource } from './util/resource';
-// export { default as features } from './util/features';
 export { increment, gauge, timing } from './util/watcher';
 export { default as base, Model } from './util/base';
 export { default as accessLogMiddleware } from './middlewares/accessLog';
@@ -13,5 +12,4 @@ export { default as serveMiddleware } from './middlewares/serve';
 export { default as pug } from './util/pug';
 export { default as session } from './util/session';
 export { default as setupRoutes } from './util/setupRoutes';
-// export { snake } from './util/magicCase';
 // export { fetchModels, fetchModel, updateModel, deleteModel } from './util/graphql';
