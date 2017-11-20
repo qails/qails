@@ -11,5 +11,5 @@ export { default as prettyJsonMiddleware } from './middlewares/prettyJson';
 export { default as serveMiddleware } from './middlewares/serve';
 export { default as pug } from './util/pug';
 export { default as session } from './util/session';
-export { default as setupRoutes } from './util/setupRoutes';
+export { default as requireAllRouters } from './util/requireAllRouters';
 // export { fetchModels, fetchModel, updateModel, deleteModel } from './util/graphql';

@@ -3,9 +3,9 @@ import should from 'should';
 import { writeFileSync } from 'fs';
 import { ensureDirSync, removeSync } from 'fs-extra';
 import { resolve } from 'path';
-import { Qails, setupRoutes } from '../../src';
+import { Qails, requireAllRouters } from '../../src';
 
-describe('util::setupRoutes', () => {
+describe('util::requireAllRouters', () => {
   const filename = 'index.js';
   const root = resolve('.tmp', 'routers');
   const sub = resolve(root, 'sub');
@@ -31,7 +31,7 @@ describe('util::setupRoutes', () => {
   it('设置不存在的routers目录应该报错', () => {
     const app = new Qails();
     try {
-      setupRoutes(app);
+      requireAllRouters(app);
       should.fail();
     } catch (e) {
       e.toString().should.containEql('No such file or directory');
@@ -43,7 +43,7 @@ describe('util::setupRoutes', () => {
     const originValue = process.env.DOCUMENT_ROOT;
     delete process.env.DOCUMENT_ROOT;
     try {
-      setupRoutes(app);
+      requireAllRouters(app);
       should.fail();
     } catch (e) {
       e.toString().should.containEql('src/routers');
@@ -53,7 +53,7 @@ describe('util::setupRoutes', () => {
 
   const app = new Qails();
   const dirname = resolve('.tmp/routers');
-  setupRoutes(app, dirname);
+  requireAllRouters(app, dirname);
 
   it('一级目录路由解析应该正常', (done) => {
     request(app.listen())
