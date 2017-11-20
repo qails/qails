@@ -8,7 +8,8 @@ const {
   prettyJsonMiddleware,
   serveMiddleware,
   pug,
-  session
+  session,
+  setupRoutes
 } = require('qails');
 
 const app = new Qails([
@@ -22,6 +23,7 @@ const app = new Qails([
 ]);
 pug(app);
 session(app);
+setupRoutes(app);
 app.use(async (ctx, next) => {
   ctx.body = 'Buildin middlewares';
   await next();
