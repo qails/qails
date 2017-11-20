@@ -82,6 +82,7 @@
     "coveralls": "^3.0.0",
     "date-fns": "^1.29.0",
     "dotenv-expand": "^4.0.1",
+    "fs-extra": "^4.0.2",
     "moment": "^2.19.2",
     "mocha": "^4.0.1",
     "nyc": "^11.3.0",
