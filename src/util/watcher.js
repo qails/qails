@@ -15,7 +15,7 @@ const sdc = new SDC({
 
 const getHostname = () => {
   let hostName = '';
-  if (process.env.WATCHER_MACHINE_RECORD === 'true') {
+  if (process.env.WATCHER_RECORD_BY_MACHINE === 'true') {
     hostName = `.${hostname().replace('.', '_')}`;
   }
   return hostName;
@@ -25,9 +25,9 @@ export const increment = (key, count) => {
   sdc.increment(`${key + getHostname()}`, count);
 };
 
-export const gauge = (key, count) => {
-  sdc.gauge(`${key + getHostname()}`, count);
-};
+// export const gauge = (key, count) => {
+//   sdc.gauge(`${key + getHostname()}`, count);
+// };
 
 export const timing = (key, timer) => {
   sdc.timing(`${key + getHostname()}`, timer);
