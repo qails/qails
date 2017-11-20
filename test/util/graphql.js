@@ -3,9 +3,7 @@ import should from 'should';
 import { range } from 'lodash';
 import casual from 'casual';
 import { buildSchema } from 'graphql';
-import { Qails, base, Model } from '../../src';
-import graphql from '../../src/middlewares/graphql';
-import { fetchAll, fetchOne, create, update, destroy } from '../../src/util/graphql';
+import { Qails, base, Model, graphqlMiddleware, fetchList, fetchItem, create, update, destroy } from '../../src';
 
 describe('util::graphql', () => {
   const ROW_COUNT = 15;
@@ -87,11 +85,11 @@ describe('util::graphql', () => {
 
   const root = {
     books: async (query) => {
-      const books = await fetchAll(Book, query);
+      const books = await fetchList(Book, query);
       return books;
     },
     book: async ({ id, ...query }) => {
-      const book = await fetchOne(Book, id, query);
+      const book = await fetchItem(Book, id, query);
       return book;
     },
     createBook: async ({ input }) => {
@@ -113,7 +111,7 @@ describe('util::graphql', () => {
   };
 
   const app = new Qails([
-    graphql({
+    graphqlMiddleware({
       schema,
       rootValue: root
     })

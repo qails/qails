@@ -12,4 +12,4 @@ export { default as serveMiddleware } from './middlewares/serve';
 export { default as pug } from './util/pug';
 export { default as session } from './util/session';
 export { default as requireAllRouters } from './util/requireAllRouters';
-// export { fetchModels, fetchModel, updateModel, deleteModel } from './util/graphql';
+export { fetchList, fetchItem, create, update, destroy } from './util/graphql';

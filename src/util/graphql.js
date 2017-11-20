@@ -7,7 +7,7 @@
 import { GraphQLError } from 'graphql';
 import { readList, readItem, createItem, updateItem, deleteItem } from './crud';
 
-export const fetchAll = async (model, query) => {
+export const fetchList = async (model, query) => {
   try {
     const result = await readList(model, query);
     return result;
@@ -16,7 +16,7 @@ export const fetchAll = async (model, query) => {
   }
 };
 
-export const fetchOne = async (model, id, query) => {
+export const fetchItem = async (model, id, query) => {
   try {
     const result = await readItem(model, id, query);
     return result;
