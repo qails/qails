@@ -51,7 +51,6 @@
     "file-stream-rotator": "0.2.0",
     "graphql": "^0.11.2",
     "graphql-tools": "^2.8.0",
-    "import-fresh": "^2.0.0",
     "joi": "^10.6.0",
     "knex": "^0.14.1",
     "koa": "^2.3.0",
