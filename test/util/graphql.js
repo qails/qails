@@ -3,7 +3,7 @@ import should from 'should';
 import { range } from 'lodash';
 import casual from 'casual';
 import { buildSchema } from 'graphql';
-import { Qails, base, Model, graphqlMiddleware, fetchList, fetchItem, create, update, destroy } from '../../src';
+import { Qails, bookshelf, Model, graphqlMiddleware, fetchList, fetchItem, create, update, destroy } from '../../src';
 
 describe('util::graphql', () => {
   const ROW_COUNT = 15;
@@ -11,7 +11,7 @@ describe('util::graphql', () => {
   const TABLE_CHAPTERS = 'chapters';
 
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_BOOKS)
       .createTable(TABLE_BOOKS, (table) => {
         table.increments();
@@ -31,12 +31,12 @@ describe('util::graphql', () => {
       book_id: item
     }));
 
-    await base.knex(TABLE_BOOKS).insert(bookData);
-    await base.knex(TABLE_CHAPTERS).insert(chapterData);
+    await bookshelf.knex(TABLE_BOOKS).insert(bookData);
+    await bookshelf.knex(TABLE_CHAPTERS).insert(chapterData);
   });
 
   after(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_BOOKS)
       .dropTableIfExists(TABLE_CHAPTERS);
   });

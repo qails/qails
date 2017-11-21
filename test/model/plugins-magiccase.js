@@ -1,12 +1,12 @@
 import casual from 'casual';
 import should from 'should';
-import { base } from '../../src';
+import { bookshelf } from '../../src';
 import magicCase, { snake } from '../../src/util/magicCase';
 
 const TABLE_USERS = 'users';
 const TABLE_POSTS = 'posts';
 
-const Post = base.Model.extend({
+const Post = bookshelf.Model.extend({
   tableName: TABLE_POSTS,
   hasTimestamps: false
 });
@@ -63,7 +63,7 @@ describe('util::snake', () => {
 
 describe('plugin::magiccase', () => {
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .createTable(TABLE_USERS, (table) => {
         table.increments();
@@ -75,18 +75,18 @@ describe('plugin::magiccase', () => {
         table.integer('user_id');
       });
 
-    await base.knex(TABLE_POSTS).insert({ user_id: 1 });
+    await bookshelf.knex(TABLE_POSTS).insert({ user_id: 1 });
   });
 
   after(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .dropTableIfExists(TABLE_POSTS);
   });
 
 
   describe('禁用插件时', () => {
-    const Model = base.Model.extend(modelOptions);
+    const Model = bookshelf.Model.extend(modelOptions);
     describe('新增数据', () => {
       it('下划线命名数据插入成功', async () => {
         const model = await Model.create({ last_name: '' });
@@ -122,8 +122,8 @@ describe('plugin::magiccase', () => {
   });
 
   describe('启用插件时', () => {
-    base.plugin(magicCase);
-    const Model = base.Model.extend(modelOptions);
+    bookshelf.plugin(magicCase);
+    const Model = bookshelf.Model.extend(modelOptions);
 
     describe('新增数据', () => {
       const name = casual.last_name;

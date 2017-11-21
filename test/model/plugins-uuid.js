@@ -1,6 +1,5 @@
 import uuid from 'bookshelf-uuid';
-// import { dropTable, recreateTable } from '../utils';
-import { base } from '../../src';
+import { bookshelf } from '../../src';
 
 const TABLE_NAME = 'uuid';
 
@@ -16,7 +15,7 @@ const modelOptionsEnablePlugin = {
 
 describe('plugin::uuid', () => {
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
         table.string('id', 36).default('').primary();
@@ -25,11 +24,11 @@ describe('plugin::uuid', () => {
   });
 
   after(async () => {
-    await base.knex.schema.dropTableIfExists(TABLE_NAME);
+    await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 
   describe('禁用插件时', () => {
-    const Model = base.Model.extend(modelOptionsDisablePlugin);
+    const Model = bookshelf.Model.extend(modelOptionsDisablePlugin);
 
     it('新增时不会插入id', async () => {
       await new Model().save({ name: 'Joe' });
@@ -39,17 +38,17 @@ describe('plugin::uuid', () => {
   });
 
   describe('启用插件时', () => {
-    base.plugin(uuid);
+    bookshelf.plugin(uuid);
 
     it('新增时自动插入id', async () => {
-      const Model = base.Model.extend(modelOptionsEnablePlugin);
+      const Model = bookshelf.Model.extend(modelOptionsEnablePlugin);
       const name = 'a';
       await new Model().save({ name });
       const model = await Model.findOne({ name });
       model.get('id').should.be.not.empty();
     });
     it('id长度为36', async () => {
-      const Model = base.Model.extend(modelOptionsEnablePlugin);
+      const Model = bookshelf.Model.extend(modelOptionsEnablePlugin);
       const name = 'b';
       await new Model().save({ name });
       const model = await Model.findOne({ name });

@@ -1,4 +1,4 @@
-import { base } from '../../src';
+import { bookshelf } from '../../src';
 
 const TABLE_NAME = 'pagination';
 
@@ -9,7 +9,7 @@ const modelOptions = {
 
 describe('plugin::pagination', () => {
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
         table.string('id');
@@ -20,16 +20,16 @@ describe('plugin::pagination', () => {
       data.push({ id: i + 1 });
     }
 
-    await base.knex(TABLE_NAME).insert(data);
+    await bookshelf.knex(TABLE_NAME).insert(data);
   });
 
   after(async () => {
-    await base.knex.schema.dropTableIfExists(TABLE_NAME);
+    await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 
   describe('启用插件时', () => {
-    base.plugin('visibility');
-    const Model = base.Model.extend(modelOptions);
+    bookshelf.plugin('visibility');
+    const Model = bookshelf.Model.extend(modelOptions);
 
     it('默认每次取回10条记录', async () => {
       const model = await Model.fetchPage();

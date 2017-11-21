@@ -1,12 +1,12 @@
 import jsonColumns from 'bookshelf-json-columns-fix';
 import should from 'should';
-import { base } from '../../src';
+import { bookshelf } from '../../src';
 
 const TABLE_NAME = 'jsoncolumns';
 
 describe('plugin::jsoncolumns', () => {
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
         table.increments();
@@ -15,15 +15,15 @@ describe('plugin::jsoncolumns', () => {
   });
 
   afterEach(async () => {
-    await base.knex(TABLE_NAME).del();
+    await bookshelf.knex(TABLE_NAME).del();
   });
 
   after(async () => {
-    await base.knex.schema.dropTableIfExists(TABLE_NAME);
+    await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 
   describe('禁用插件时', () => {
-    const Model = class extends base.Model {
+    const Model = class extends bookshelf.Model {
       get tableName() { return TABLE_NAME; }
       get hasTimestamps() { return false; }
     };
@@ -49,8 +49,8 @@ describe('plugin::jsoncolumns', () => {
   });
 
   describe('启用插件时', () => {
-    base.plugin(jsonColumns);
-    const Model = class extends base.Model {
+    bookshelf.plugin(jsonColumns);
+    const Model = class extends bookshelf.Model {
       static jsonColumns = ['geojson'];
       get tableName() { return TABLE_NAME; }
       get hasTimestamps() { return false; }

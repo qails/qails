@@ -1,6 +1,6 @@
 import cascadeDelete from 'bookshelf-cascade-delete-fix';
 import should from 'should';
-import { base } from '../../src';
+import { bookshelf } from '../../src';
 
 const TABLE_USERS = 'users';
 const TABLE_POSTS = 'posts';
@@ -8,7 +8,7 @@ const TABLE_COMMENTS = 'comments';
 
 describe('plugin::cascadedelete', () => {
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .createTable(TABLE_USERS, (table) => {
         table.increments();
@@ -28,13 +28,13 @@ describe('plugin::cascadedelete', () => {
     const postData = [1, 2, 3].map(item => ({ id: item, user_id: item }));
     const commentData = [1, 2, 3].map(item => ({ id: item, post_id: item }));
 
-    await base.knex(TABLE_USERS).insert(userData);
-    await base.knex(TABLE_POSTS).insert(postData);
-    await base.knex(TABLE_COMMENTS).insert(commentData);
+    await bookshelf.knex(TABLE_USERS).insert(userData);
+    await bookshelf.knex(TABLE_POSTS).insert(postData);
+    await bookshelf.knex(TABLE_COMMENTS).insert(commentData);
   });
 
   after(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .dropTableIfExists(TABLE_POSTS)
       .dropTableIfExists(TABLE_COMMENTS);
@@ -42,10 +42,10 @@ describe('plugin::cascadedelete', () => {
 
   describe('禁用插件时', () => {
     it('当模型被删除时，直接关联模型不会被删除', async () => {
-      const User = base.Model.extend({
+      const User = bookshelf.Model.extend({
         tableName: 'users'
       });
-      const Post = base.Model.extend({
+      const Post = bookshelf.Model.extend({
         tableName: 'posts'
       });
       const id = 1;
@@ -56,18 +56,18 @@ describe('plugin::cascadedelete', () => {
   });
 
   describe('启用插件时', () => {
-    base.plugin(cascadeDelete);
+    bookshelf.plugin(cascadeDelete);
 
-    const Comment = base.Model.extend({
+    const Comment = bookshelf.Model.extend({
       tableName: 'comments'
     });
-    const Post = base.Model.extend({
+    const Post = bookshelf.Model.extend({
       tableName: 'posts',
       comments() {
         return this.hasMany(Comment);
       }
     }, { dependents: ['comments'] });
-    const User = base.Model.extend({
+    const User = bookshelf.Model.extend({
       tableName: 'users',
       posts() {
         return this.hasMany(Post);

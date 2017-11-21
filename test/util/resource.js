@@ -8,7 +8,7 @@ import should from 'should';
 import request from 'supertest';
 import mask from 'bookshelf-mask';
 import { range, first, last, repeat } from 'lodash';
-import { base, Qails, Resource, bodyParserMiddleware } from '../../src';
+import { bookshelf, Qails, Resource, bodyParserMiddleware } from '../../src';
 import magicCase from '../../src/util/magicCase';
 
 describe('util::resource', () => {
@@ -16,15 +16,15 @@ describe('util::resource', () => {
   const TABLE_BOOKS = 'books';
   const TABLE_CHAPTERS = 'chapters';
 
-  base.plugin(mask);
-  base.plugin(magicCase);
+  bookshelf.plugin(mask);
+  bookshelf.plugin(magicCase);
 
-  const Chapter = class extends base.Model {
+  const Chapter = class extends bookshelf.Model {
     get tableName() { return TABLE_CHAPTERS; }
     get hasTimestamps() { return false; }
   };
 
-  const Book = class extends base.Model {
+  const Book = class extends bookshelf.Model {
     get tableName() { return TABLE_BOOKS; }
     get hasTimestamps() { return false; }
     chapters() {
@@ -33,7 +33,7 @@ describe('util::resource', () => {
   };
 
   before(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_BOOKS)
       .createTable(TABLE_BOOKS, (table) => {
         table.increments();
@@ -44,20 +44,20 @@ describe('util::resource', () => {
         table.integer('book_id');
       });
 
-    await base.knex(TABLE_CHAPTERS)
+    await bookshelf.knex(TABLE_CHAPTERS)
       .insert(range(1, ROW_COUNT + 1).map(item => ({ book_id: item })));
   });
 
   beforeEach(async () => {
-    await base.knex(TABLE_BOOKS).insert(range(1, ROW_COUNT + 1).map(item => ({ id: item })));
+    await bookshelf.knex(TABLE_BOOKS).insert(range(1, ROW_COUNT + 1).map(item => ({ id: item })));
   });
 
   afterEach(async () => {
-    await base.knex(TABLE_BOOKS).del();
+    await bookshelf.knex(TABLE_BOOKS).del();
   });
 
   after(async () => {
-    await base.knex.schema
+    await bookshelf.knex.schema
       .dropTableIfExists(TABLE_BOOKS)
       .dropTableIfExists(TABLE_CHAPTERS);
   });
@@ -603,8 +603,8 @@ describe('util::resource', () => {
   });
 
   describe('不使用模型插件', () => {
-    const bookshelf = require('../../src/util/base').Model;
-    const BookWithoutPlugin = class extends bookshelf {
+    const { Model } = require('../../src/util/bookshelf');
+    const BookWithoutPlugin = class extends Model {
       get tableName() { return TABLE_BOOKS; }
       get hasTimestamps() { return false; }
     };
