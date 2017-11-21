@@ -1,5 +1,5 @@
-import cascadeDelete from 'bookshelf-cascade-delete-fix';
 import should from 'should';
+import importFresh from 'import-fresh';
 import { bookshelf } from '../../src';
 
 const TABLE_USERS = 'users';
@@ -8,6 +8,8 @@ const TABLE_COMMENTS = 'comments';
 
 describe('plugin::cascadedelete', () => {
   before(async () => {
+    process.env.MODEL_CASCADEDELETE = 'false';
+
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .createTable(TABLE_USERS, (table) => {
@@ -34,6 +36,8 @@ describe('plugin::cascadedelete', () => {
   });
 
   after(async () => {
+    process.env.MODEL_CASCADEDELETE = 'false';
+
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .dropTableIfExists(TABLE_POSTS)
@@ -42,12 +46,13 @@ describe('plugin::cascadedelete', () => {
 
   describe('禁用插件时', () => {
     it('当模型被删除时，直接关联模型不会被删除', async () => {
-      const User = bookshelf.Model.extend({
-        tableName: 'users'
-      });
-      const Post = bookshelf.Model.extend({
-        tableName: 'posts'
-      });
+      const { Model } = importFresh('../../src/util/bookshelf');
+      const User = class extends Model {
+        get tableName() { return TABLE_USERS; }
+      };
+      const Post = class extends Model {
+        get tableName() { return TABLE_POSTS; }
+      };
       const id = 1;
       await User.destroy({ id });
       const post = await Post.findOne({ user_id: id });
@@ -56,23 +61,22 @@ describe('plugin::cascadedelete', () => {
   });
 
   describe('启用插件时', () => {
-    bookshelf.plugin(cascadeDelete);
+    process.env.MODEL_CASCADEDELETE = 'true';
+    const { Model } = importFresh('../../src/util/bookshelf');
 
-    const Comment = bookshelf.Model.extend({
-      tableName: 'comments'
-    });
-    const Post = bookshelf.Model.extend({
-      tableName: 'posts',
-      comments() {
-        return this.hasMany(Comment);
-      }
-    }, { dependents: ['comments'] });
-    const User = bookshelf.Model.extend({
-      tableName: 'users',
-      posts() {
-        return this.hasMany(Post);
-      }
-    }, { dependents: ['posts'] });
+    const Comment = class extends Model {
+      get tableName() { return TABLE_COMMENTS; }
+    };
+    const Post = class extends Model {
+      static dependents = ['comments'];
+      get tableName() { return TABLE_POSTS; }
+      comments() { return this.hasMany(Comment); }
+    };
+    const User = class extends Model {
+      static dependents = ['posts'];
+      get tableName() { return TABLE_USERS; }
+      posts() { return this.hasMany(Post); }
+    };
 
     it('当模型被删除时，直接关联模型也被删除', async () => {
       const id = 2;

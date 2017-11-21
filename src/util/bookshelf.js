@@ -17,8 +17,6 @@ const {
   MODEL_REGISTRY,
   MODEL_VIRTUALS,
   MODEL_VISIBILITY,
-  MODEL_PAGINATION,
-  MODEL_BASE,
   MODEL_CASCADEDELETE,
   MODEL_MASK,
   MODEL_UUID,
@@ -39,6 +37,13 @@ const base = bookshelf(knex({
   }
 }));
 
+
+// 让 Model 具有时间戳、数据校验和部分CRUD功能
+base.plugin(modelBase.pluggable);
+
+// 让 Model 具有分页功能
+base.plugin('pagination');
+
 // 让 Model 具有自动注册到中央位置的功能
 if (MODEL_REGISTRY === 'true') {
   base.plugin('registry');
@@ -54,13 +59,11 @@ if (MODEL_VISIBILITY === 'true') {
   base.plugin('visibility');
 }
 
-// 让 Model 具有时间戳、数据校验和部分CURD功能
-if (MODEL_BASE === 'true') {
-  base.plugin(modelBase.pluggable);
-}
-// 让 Model 具有分页功能
-if (MODEL_PAGINATION === 'true') {
-  base.plugin('pagination');
+// 让 Model 具有软删除记录的能力
+// 注意：加载顺序必须是 paranoia -> cascadeDelete，否则会有 bug
+if (MODEL_SOFTDELETE === 'true') {
+  // field 参数改到 model 中设置
+  base.plugin(paranoia);
 }
 
 // 让 Model 具有删除关联数据功能
@@ -86,12 +89,6 @@ if (MODEL_JSONCOLUMNS === 'true') {
 // 让 Model 具有自动转换对象 key 拼写的能力
 if (MODEL_MAGICCASE === 'true') {
   base.plugin(magicCase);
-}
-
-// 让 Model 具有软删除记录的能力
-if (MODEL_SOFTDELETE === 'true') {
-  // field 参数改到 model 中设置
-  base.plugin(paranoia);
 }
 
 // 外部可以base.knex取到knex client

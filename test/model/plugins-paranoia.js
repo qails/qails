@@ -1,5 +1,4 @@
-import paranoia from 'bookshelf-paranoia';
-import cascadeDelete from 'bookshelf-cascade-delete-fix';
+import importFresh from 'import-fresh';
 import should from 'should';
 import { bookshelf } from '../../src';
 
@@ -11,6 +10,9 @@ const id = 1;
 
 describe('plugin::paranoia', () => {
   before(async () => {
+    // process.env.MODEL_CASCADEDELETE = 'false';
+    // process.env.MODEL_SOFTDELETE = 'false';
+
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .createTable(TABLE_USERS, (table) => {
@@ -47,16 +49,20 @@ describe('plugin::paranoia', () => {
   });
 
   after(async () => {
+    // process.env.MODEL_CASCADEDELETE = 'false';
+    // process.env.MODEL_SOFTDELETE = 'false';
+
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
       .dropTableIfExists(TABLE_POSTS)
       .dropTableIfExists(TABLE_COMMENTS);
   });
 
-  bookshelf.plugin(paranoia);
-
   describe('单独使用时', () => {
-    const User = bookshelf.Model.extend({
+    process.env.MODEL_SOFTDELETE = 'true';
+    const { Model } = importFresh('../../src/util/bookshelf');
+
+    const User = Model.extend({
       tableName: TABLE_USERS,
       softDelete: true
     });
@@ -84,13 +90,15 @@ describe('plugin::paranoia', () => {
     });
   });
 
-  bookshelf.plugin(cascadeDelete);
   describe('和cascadedelete一起使用时', () => {
-    const Comment = class extends bookshelf.Model {
+    process.env.MODEL_CASCADEDELETE = 'true';
+    const { Model } = importFresh('../../src/util/bookshelf');
+
+    const Comment = class extends Model {
       get tableName() { return TABLE_COMMENTS; }
       get softDelete() { return true; }
     };
-    const Post = class extends bookshelf.Model {
+    const Post = class extends Model {
       static dependents = ['comments'];
       get tableName() { return TABLE_POSTS; }
       get softDelete() { return true; }
@@ -98,7 +106,7 @@ describe('plugin::paranoia', () => {
         return this.hasMany(Comment);
       }
     };
-    const User = class extends bookshelf.Model {
+    const User = class extends Model {
       static dependents = ['posts'];
       get tableName() { return TABLE_USERS; }
       get softDelete() { return true; }

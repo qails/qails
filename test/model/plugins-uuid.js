@@ -1,20 +1,11 @@
-import uuid from 'bookshelf-uuid';
+import importFresh from 'import-fresh';
 import { bookshelf } from '../../src';
 
 const TABLE_NAME = 'uuid';
 
-const modelOptionsDisablePlugin = {
-  tableName: TABLE_NAME,
-  hasTimestamps: false
-};
-
-const modelOptionsEnablePlugin = {
-  uuid: true,
-  ...modelOptionsDisablePlugin
-};
-
 describe('plugin::uuid', () => {
   before(async () => {
+    process.env.MODEL_UUID = 'false';
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
@@ -24,34 +15,43 @@ describe('plugin::uuid', () => {
   });
 
   after(async () => {
+    process.env.MODEL_UUID = 'false';
     await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 
   describe('禁用插件时', () => {
-    const Model = bookshelf.Model.extend(modelOptionsDisablePlugin);
+    const { Model } = importFresh('../../src/util/bookshelf');
+    const Person = class extends Model {
+      get tableName() { return TABLE_NAME; }
+      get hasTimestamps() { return false; }
+    };
 
     it('新增时不会插入id', async () => {
-      await new Model().save({ name: 'Joe' });
-      const model = await Model.findOne({ name: 'Joe' });
+      await new Person().save({ name: 'Joe' });
+      const model = await Person.findOne({ name: 'Joe' });
       model.get('id').should.be.exactly('');
     });
   });
 
   describe('启用插件时', () => {
-    bookshelf.plugin(uuid);
+    process.env.MODEL_UUID = 'true';
+    const { Model } = importFresh('../../src/util/bookshelf');
+    const Person = class extends Model {
+      get tableName() { return TABLE_NAME; }
+      get hasTimestamps() { return false; }
+      get uuid() { return true; }
+    };
 
     it('新增时自动插入id', async () => {
-      const Model = bookshelf.Model.extend(modelOptionsEnablePlugin);
       const name = 'a';
-      await new Model().save({ name });
-      const model = await Model.findOne({ name });
+      await new Person().save({ name });
+      const model = await Person.findOne({ name });
       model.get('id').should.be.not.empty();
     });
     it('id长度为36', async () => {
-      const Model = bookshelf.Model.extend(modelOptionsEnablePlugin);
       const name = 'b';
-      await new Model().save({ name });
-      const model = await Model.findOne({ name });
+      await new Person().save({ name });
+      const model = await Person.findOne({ name });
       model.get('id').length.should.eql(36);
     });
   });
