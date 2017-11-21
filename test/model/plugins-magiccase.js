@@ -56,7 +56,7 @@ describe('util::snake', () => {
 
 describe('plugin::magiccase', () => {
   before(async () => {
-    process.env.MODEL_MAGICCASE = 'false';
+    delete process.env.MODEL_MAGICCASE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
@@ -74,7 +74,7 @@ describe('plugin::magiccase', () => {
   });
 
   after(async () => {
-    process.env.MODEL_MAGICCASE = 'false';
+    delete process.env.MODEL_MAGICCASE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)

@@ -5,7 +5,7 @@ const TABLE_NAME = 'visibility';
 
 describe('plugin::visibility', () => {
   before(async () => {
-    process.env.MODEL_VISIBILITY = 'false';
+    delete process.env.MODEL_VISIBILITY;
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
@@ -16,7 +16,7 @@ describe('plugin::visibility', () => {
   });
 
   after(async () => {
-    process.env.MODEL_VISIBILITY = 'false';
+    delete process.env.MODEL_VISIBILITY;
     await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 

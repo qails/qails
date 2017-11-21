@@ -2,6 +2,10 @@ import should from 'should';
 import { increment, timing } from '../../src';
 
 describe('util::watcher', () => {
+  after(() => {
+    delete process.env.WATCHER_RECORD_BY_MACHINE;
+  });
+
   describe('应该按机器名分开打点', () => {
     before(() => {
       process.env.WATCHER_RECORD_BY_MACHINE = 'true';

@@ -5,7 +5,7 @@ const TABLE_NAME = 'mask';
 
 describe('plugin::mask', () => {
   before(async () => {
-    process.env.MODEL_MASK = 'false';
+    delete process.env.MODEL_MASK;
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
@@ -16,7 +16,7 @@ describe('plugin::mask', () => {
   });
 
   after(async () => {
-    process.env.MODEL_MASK = 'false';
+    delete process.env.MODEL_MASK;
     await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 

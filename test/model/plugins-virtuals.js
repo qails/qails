@@ -5,11 +5,11 @@ const fullName = 'abc';
 
 describe('plugin::Virtuals', () => {
   before(() => {
-    process.env.MODEL_VIRTUALS = 'false';
+    delete process.env.MODEL_VIRTUALS;
   });
 
   after(() => {
-    process.env.MODEL_VIRTUALS = 'false';
+    delete process.env.MODEL_VIRTUALS;
   });
 
   describe('禁用插件时', () => {

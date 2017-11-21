@@ -2,11 +2,11 @@ import importFresh from 'import-fresh';
 
 describe('plugin::mask', () => {
   before(async () => {
-    process.env.MODEL_REGISTRY = 'false';
+    delete process.env.MODEL_REGISTRY;
   });
 
   after(async () => {
-    process.env.MODEL_REGISTRY = 'false';
+    delete process.env.MODEL_REGISTRY;
   });
 
   process.env.MODEL_REGISTRY = 'true';

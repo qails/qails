@@ -10,8 +10,8 @@ const id = 1;
 
 describe('plugin::paranoia', () => {
   before(async () => {
-    // process.env.MODEL_CASCADEDELETE = 'false';
-    // process.env.MODEL_SOFTDELETE = 'false';
+    delete process.env.MODEL_CASCADEDELETE;
+    delete process.env.MODEL_SOFTDELETE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
@@ -49,8 +49,8 @@ describe('plugin::paranoia', () => {
   });
 
   after(async () => {
-    // process.env.MODEL_CASCADEDELETE = 'false';
-    // process.env.MODEL_SOFTDELETE = 'false';
+    delete process.env.MODEL_CASCADEDELETE;
+    delete process.env.MODEL_SOFTDELETE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)

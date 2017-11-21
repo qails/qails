@@ -8,7 +8,7 @@ const TABLE_COMMENTS = 'comments';
 
 describe('plugin::cascadedelete', () => {
   before(async () => {
-    process.env.MODEL_CASCADEDELETE = 'false';
+    delete process.env.MODEL_CASCADEDELETE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)
@@ -36,7 +36,7 @@ describe('plugin::cascadedelete', () => {
   });
 
   after(async () => {
-    process.env.MODEL_CASCADEDELETE = 'false';
+    delete process.env.MODEL_CASCADEDELETE;
 
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_USERS)

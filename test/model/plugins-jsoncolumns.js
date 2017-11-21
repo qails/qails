@@ -6,7 +6,7 @@ const TABLE_NAME = 'users';
 
 describe('plugin::jsoncolumns', () => {
   before(async () => {
-    process.env.MODEL_JSONCOLUMNS = 'false';
+    delete process.env.MODEL_JSONCOLUMNS;
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
@@ -20,7 +20,7 @@ describe('plugin::jsoncolumns', () => {
   });
 
   after(async () => {
-    process.env.MODEL_JSONCOLUMNS = 'false';
+    delete process.env.MODEL_JSONCOLUMNS;
     await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 

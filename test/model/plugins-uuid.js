@@ -5,7 +5,7 @@ const TABLE_NAME = 'uuid';
 
 describe('plugin::uuid', () => {
   before(async () => {
-    process.env.MODEL_UUID = 'false';
+    delete process.env.MODEL_UUID;
     await bookshelf.knex.schema
       .dropTableIfExists(TABLE_NAME)
       .createTable(TABLE_NAME, (table) => {
@@ -15,7 +15,7 @@ describe('plugin::uuid', () => {
   });
 
   after(async () => {
-    process.env.MODEL_UUID = 'false';
+    delete process.env.MODEL_UUID;
     await bookshelf.knex.schema.dropTableIfExists(TABLE_NAME);
   });
 
