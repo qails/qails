@@ -1,23 +1,23 @@
-import { Model } from '../../../../src';
-import { model as Room } from '../room';
+import { Model } from 'qails';
+import { model as Post } from '../post';
 
 /**
- * @class Hotel
+ * @class User
  */
-export default class Hotel extends Model {
+export default class User extends Model {
   /**
    * 依赖模型方法，在本模型底部有定义
    * 删除时依据此项删除关联表中对应的数据
    * @static {array}
    */
-  static dependents = ['rooms']; // eslint-disable-line
+  static dependents = ['posts'];
 
   /**
    * @method 表名称
    * @return {string}
    */
   get tableName() {
-    return 'hotels';
+    return 'users';
   }
 
   /**
@@ -27,15 +27,15 @@ export default class Hotel extends Model {
    * @return {boolean|array}
    */
   get hasTimestamps() {
-    return ['createdAt', 'updatedAt'];
+    return false;
   }
 
   /**
-   * One-to-many
+   * 1:n
    * @method
    * @return {bookshelf.Collection}
    */
-  rooms() {
-    return this.hasMany(Room, 'hotelId');
+  posts() {
+    return this.hasMany(Post);
   }
 }

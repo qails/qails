@@ -1,27 +1,31 @@
 # Qails Example: GraphQL
 
-## Install
+本例演示如何使用 qails 实现 GraphQL server。
 
-1. 安装依赖包
+## 前提
+
+- 需要有 `MySQL` 环境
+- node >= 7.6 (推荐)
+
+## 安装
+
+1. 修改实例项目根目录下的 `.env` 中的数据库连接信息
 
     ```
-    npm install
-
+    # mysql服务器地址
+    MYSQL_HOST=localhost
+    # mysql用户名
+    MYSQL_USER=root
+    # mysql密码
+    MYSQL_PASSWORD=
+    # mysql数据库名
+    MYSQL_DATABASE=qails_example
     ```
 
-1. 创建数据库
-    ```sql
-    create database qails;
+2. 安装依赖和初始化数据库
+
+    ```
+    npm install && npm run seed && npm start
     ```
 
-1. 修改数据库配置
-    ```
-    vi .env
-    ```
-
-1. 启动服务
-    ```
-    npm start
-    ```
-
-1. 在浏览器中访问 `http://localhost:4001/graphql`
+3. 访问 `http://localhost:12345/graphql` 即可看到效果。
