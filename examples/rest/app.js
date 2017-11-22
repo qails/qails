@@ -6,7 +6,7 @@ import {
   prettyJsonMiddleware,
   serveMiddleware,
   pug,
-  setupRoutes
+  requireAllRouters
 } from 'qails';
 
 const port = 12345;
@@ -20,7 +20,7 @@ const app = new Qails([
   serveMiddleware(resolve('node_modules/jquery/dist'))
 ]);
 pug(app, { viewPath: resolve('templates/pages') });
-setupRoutes(app, resolve('routers'));
+requireAllRouters(app);
 
 app.listen(port, (err) => {
   if (err) {

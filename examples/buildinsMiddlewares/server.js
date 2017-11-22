@@ -9,7 +9,7 @@ const {
   serveMiddleware,
   pug,
   session,
-  setupRoutes
+  requireAllRouters
 } = require('qails');
 
 const app = new Qails([
@@ -23,7 +23,7 @@ const app = new Qails([
 ]);
 pug(app);
 session(app);
-setupRoutes(app);
+requireAllRouters(app);
 app.use(async (ctx, next) => {
   ctx.body = 'Buildin middlewares';
   await next();
