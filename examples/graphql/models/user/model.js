@@ -1,5 +1,5 @@
 import { Model } from 'qails';
-import { model as Post } from '../post';
+import Post from '../post/model';
 
 /**
  * @class User
