@@ -10,7 +10,7 @@ import { snake } from './magicCase';
 
 export const readList = async (Model, query) => {
   const model = Model.forge();
-  const { embed, withRelated, mask, page, pageSize, limit, offset } = query;
+  const { embed, withRelated, mask, page, pageSize, first, limit, offset } = query;
   let { where, andWhere, orWhere, sort } = query;
   let fetchParams = { require: true };
   let result = {};
@@ -34,8 +34,9 @@ export const readList = async (Model, query) => {
     }
   }
 
-  if (embed || withRelated) {
-    fetchParams.withRelated = (embed || withRelated).split(',');
+  const relations = embed || withRelated;
+  if (relations) {
+    fetchParams.withRelated = relations.split(',');
   }
 
   if (where) {
@@ -88,7 +89,7 @@ export const readList = async (Model, query) => {
 
   let items;
   // Pagination support
-  if (page || pageSize || limit || offset) {
+  if (page || pageSize || first || limit || offset) {
     if (page || pageSize) {
       fetchParams = {
         page,
@@ -97,7 +98,7 @@ export const readList = async (Model, query) => {
       };
     } else {
       fetchParams = {
-        limit,
+        limit: limit || first,
         offset,
         ...fetchParams
       };
