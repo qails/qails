@@ -3,19 +3,24 @@ export default `
     name: String
   }
 
-  interface Model {
+  type P {
     id: ID
   }
 
   type User implements Model {
     id: ID
     name: String
-    posts: [Post]
+    posts(first: Int): Posts
+  }
+
+  type Users implements List {
+    pagination: Pagination
+    list: [User]
   }
 
   type Query {
-    users(withRelated: [String], page: Int, pageSize: Int, limit: Int, offset: Int): [User]
-    user(id: ID!, withRelated: [String]): User
+    users(withRelated: String, where: [String], andWhere: [String], orWhere: [String], sort: String, page: Int, pageSize: Int, limit: Int, offset: Int): Users
+    user(id: ID!, withRelated: String): User
   }
 
   type Mutation {

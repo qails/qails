@@ -4,12 +4,10 @@ import Post from './model';
 export default {
   Query: {
     posts: async (_, query) => {
-      const posts = await fetchList(Post, query);
-      return posts;
+      return await fetchList(Post, query);
     },
     post: async (_, { id, ...query }) => {
-      const post = await fetchItem(Post, id, query);
-      return post;
+      return await fetchItem(Post, id, query);
     }
   }
 };

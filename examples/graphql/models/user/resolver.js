@@ -1,29 +1,31 @@
 import { fetchList, fetchItem, create, update, destroy } from 'qails';
 import User from './model';
+import Post from '../post/model';
 
 export default {
+  User: {
+    async posts(parent, args) {
+      args = {...args, where: { user_id: parent.id } };
+      return await fetchList(Post, args);
+    }
+  },
   Query: {
     users: async (_, query) => {
-      const users = await fetchList(User, query);
-      return users;
+      return await fetchList(User, query);
     },
     user: async (_, { id, ...query }) => {
-      const user = await fetchItem(User, id, query);
-      return user;
+      return await fetchItem(User, id, query);
     }
   },
   Mutation: {
     createUser: async (_, { input }) => {
-      const user = await create(User, input);
-      return user;
+      return await create(User, input);
     },
     updateUser: async (_, { id, input }) => {
-      const user = await update(User, id, input);
-      return user;
+      return await update(User, id, input);
     },
     deleteUser: async (_, { id }) => {
-      const user = await destroy(User, id);
-      return user;
+      return await destroy(User, id);
     }
   }
 };
