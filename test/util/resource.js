@@ -105,6 +105,17 @@ describe('util::resource', () => {
                   return done();
                 });
             });
+            it('where=id,=,2', (done) => {
+              const id = 2;
+              request(app.listen())
+                .get(`/books?where=id,=,${id}`)
+                .expect(200, (err, res) => {
+                  const { body } = res;
+                  should(body).be.not.undefined();
+                  first(body).should.have.property('id', id);
+                  return done();
+                });
+            });
             it('长度对3取模后余数不足三的数组类型参数应该无效', async () => {
               const { body } = await request(app.listen()).get('/books?where=id&where==');
               body.should.have.length(ROW_COUNT);
@@ -120,6 +131,15 @@ describe('util::resource', () => {
             });
           });
           describe('andWhere', () => {
+            it('应该支持字符串类型参数', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&andWhere=id,=,3')
+                .expect(200, (err, res) => {
+                  const { body } = res;
+                  body.should.have.property('message', 'EmptyResponse');
+                  return done();
+                });
+            });
             it('应该支持对象类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&andWhere[id]=3')
@@ -160,6 +180,18 @@ describe('util::resource', () => {
             });
           });
           describe('orWhere', () => {
+            it('应该支持字符串类型参数', (done) => {
+              request(app.listen())
+                .get('/books?where[id]=2&orWhere=id,=,3')
+                .expect('Content-Type', /json/)
+                .expect(200, (err, res) => {
+                  const { body } = res;
+                  body.should.have.length(2);
+                  first(body).should.have.property('id', 2);
+                  last(body).should.have.property('id', 3);
+                  return done();
+                });
+            });
             it('应该支持对象类型参数', (done) => {
               request(app.listen())
                 .get('/books?where[id]=2&orWhere[id]=3')

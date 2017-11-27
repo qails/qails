@@ -1,3 +1,5 @@
+/* eslint global-require: 0, import/no-dynamic-require: 0 */
+
 import { resolve } from 'path';
 import glob from 'packing-glob';
 import { mergeResolvers, mergeTypes } from 'merge-graphql-schemas';

@@ -19,7 +19,7 @@ export default `
   }
 
   type Query {
-    users(withRelated: String, where: [String], andWhere: [String], orWhere: [String], sort: String, page: Int, pageSize: Int, limit: Int, offset: Int): Users
+    users(withRelated: String, where: String, andWhere: String, orWhere: String, sort: String, page: Int, pageSize: Int, limit: Int, offset: Int, first: Int): Users
     user(id: ID!, withRelated: String): User
   }
 

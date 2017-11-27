@@ -7,7 +7,7 @@ import {
   graphqlMiddleware
 } from 'qails';
 import { makeExecutableSchema } from 'graphql-tools';
-import { typeDefs, resolvers } from './graphql';
+import { typeDefs, resolvers } from './util/mergeGraphqlSchema';
 
 
 const port = 12345;

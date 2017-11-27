@@ -9,7 +9,7 @@ export default `
   }
 
   type Query {
-    posts(withRelated: String, where: [String], andWhere: [String], orWhere: [String], sort: String, page: Int, pageSize: Int, limit: Int, offset: Int): Posts
-    post(id: ID!, withRelated: [String]): Post
+    posts(withRelated: String, where: String, andWhere: String, orWhere: String, sort: String, page: Int, pageSize: Int, limit: Int, offset: Int, first: Int): Posts
+    post(id: ID!, withRelated: String): Post
   }
 `;

@@ -10,11 +10,11 @@ export default {
     }
   },
   Query: {
-    users: async (_, query) => {
-      return await fetchList(User, query);
+    users: async (_, args) => {
+      return await fetchList(User, args);
     },
-    user: async (_, { id, ...query }) => {
-      return await fetchItem(User, id, query);
+    user: async (_, { id, ...args }) => {
+      return await fetchItem(User, id, args);
     }
   },
   Mutation: {

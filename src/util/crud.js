@@ -4,7 +4,7 @@
  */
 
 /* eslint import/prefer-default-export: 0 */
-import { isObject, isFunction } from 'util';
+import { isObject, isFunction, isString } from 'util';
 import { chunk, startsWith } from 'lodash';
 import { snake } from './magicCase';
 
@@ -40,8 +40,12 @@ export const readList = async (Model, query) => {
   }
 
   if (where) {
-    // where=id\&where=\>\&where=1
+    if (isString(where)) {
+      // where=id,>,10
+      where = where.split(',');
+    }
     if (Array.isArray(where)) {
+      // where=id\&where=\>\&where=1
       chunk(where, 3).forEach((item) => {
         // 确保拆分后的数组是一个完整的 where 条件
         if (item.length === 3) {
@@ -55,6 +59,10 @@ export const readList = async (Model, query) => {
   }
 
   if (orWhere) {
+    if (isString(orWhere)) {
+      // orWhere=id,>,10
+      orWhere = orWhere.split(',');
+    }
     if (Array.isArray(orWhere)) {
       chunk(orWhere, 3).forEach((item) => {
         // 确保拆分后的数组是一个完整的 where 条件
@@ -68,6 +76,10 @@ export const readList = async (Model, query) => {
   }
 
   if (andWhere) {
+    if (isString(andWhere)) {
+      // andWhere=id,>,10
+      andWhere = andWhere.split(',');
+    }
     if (Array.isArray(andWhere)) {
       chunk(andWhere, 3).forEach((item) => {
         // 确保拆分后的数组是一个完整的 where 条件

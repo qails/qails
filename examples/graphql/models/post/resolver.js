@@ -3,11 +3,11 @@ import Post from './model';
 
 export default {
   Query: {
-    posts: async (_, query) => {
-      return await fetchList(Post, query);
+    posts: async (_, args) => {
+      return await fetchList(Post, args);
     },
-    post: async (_, { id, ...query }) => {
-      return await fetchItem(Post, id, query);
+    post: async (_, { id, ...args }) => {
+      return await fetchItem(Post, id, args);
     }
   }
 };
