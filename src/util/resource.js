@@ -37,7 +37,7 @@ export default class ResourceRouter extends Router {
   constructor(model, options) {
     const { tableName } = model.prototype;
     options = defaults(options, {
-      name: tableName,
+      // name: tableName,
       prefix: '',
       root: `/${tableName}`
     });
