@@ -3,10 +3,6 @@ export default `
     name: String
   }
 
-  type P {
-    id: ID
-  }
-
   type User implements Model {
     id: ID
     name: String
