@@ -328,12 +328,12 @@ describe('util::resource', () => {
                   if (err) {
                     return done(err);
                   }
-                  const { body: { pagination, list } } = res;
+                  const { body: { pagination, nodes } } = res;
                   pagination.should.have.property('page', 1);
                   pagination.should.have.property('pageSize', 10);
                   pagination.should.have.property('rowCount', ROW_COUNT);
                   pagination.should.have.property('pageCount', 2);
-                  list.should.have.length(10);
+                  nodes.should.have.length(10);
                   return done();
                 });
             });
@@ -350,13 +350,13 @@ describe('util::resource', () => {
                   if (err) {
                     return done(err);
                   }
-                  const { body: { pagination, list } } = res;
+                  const { body: { pagination, nodes } } = res;
                   pagination.should.have.property('page', page);
                   pagination.should.have.property('pageSize', pageSize);
                   pagination.should.have.property('rowCount', ROW_COUNT);
                   pagination.should.have.property('pageCount', pageCount);
-                  list.should.have.length(pageSize);
-                  first(list).should.have.property('id', ((page - 1) * pageSize) + 1);
+                  nodes.should.have.length(pageSize);
+                  first(nodes).should.have.property('id', ((page - 1) * pageSize) + 1);
                   return done();
                 });
             });
@@ -366,9 +366,9 @@ describe('util::resource', () => {
               request(app.listen())
                 .get(`/books?offset=0&mask=${showColumn}&sort=${showColumn}`)
                 .end((err, res) => {
-                  const { body: { list } } = res;
-                  first(list).should.not.have.property('id');
-                  first(list).should.have.property(showColumn);
+                  const { body: { nodes } } = res;
+                  first(nodes).should.not.have.property('id');
+                  first(nodes).should.have.property(showColumn);
                   return done();
                 });
             });

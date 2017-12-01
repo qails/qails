@@ -2,13 +2,13 @@
  * 该文件存放公共 schema
  */
 export default `
-  # 通用模型接口
-  interface Model {
+  # 通用模型节点接口
+  interface Node {
     id: ID
   }
 
   # 通用列表接口
-  interface List {
+  interface Collection {
     pagination: Pagination
   }
 

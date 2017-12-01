@@ -61,10 +61,33 @@ describe('util::graphql', () => {
       name: String
       author: String
     }
+    type Pagination {
+      # 记录总数
+      rowCount: Int
+
+      # 页面总数
+      pageCount: Int
+
+      # 当前页数
+      page: Int
+
+      # 每页显示的记录条数
+      pageSize: Int
+
+      # 游标起始偏移的位置
+      offset: Int
+
+      # 限制单次查询允许返回的记录数
+      limit: Int
+    }
     type Book {
       id: ID!
       name: String
       chapters: [Chapter]
+    }
+    type Books {
+      pagination: Pagination
+      nodes: [Book]
     }
     type Chapter {
       id: ID!
@@ -72,7 +95,7 @@ describe('util::graphql', () => {
       book_id: Int
     }
     type Query {
-      books(withRelated: String, where: [String], andWhere: [String], orWhere: [String], sort: String, page: Int, pageSize: Int, limit: Int, offset: Int): [Book]
+      books(withRelated: String, where: [String], andWhere: [String], orWhere: [String], sort: String, page: Int, pageSize: Int, limit: Int, offset: Int, first: Int): Books
       book(id: Int!, withRelated: String): Book
     }
     type Mutation {
@@ -117,36 +140,53 @@ describe('util::graphql', () => {
     })
   ]);
 
-  it('应该返回所有记录', async () => {
+  it('应该返回参数错误', async () => {
     const query = `query {
       books {
-        id
+        nodes {
+          id
+        }
       }
     }`;
-    const { body: { data: { books } } } = await request(app.listen()).post('/graphql').send({ query });
-    should(books).not.empty();
-    books.should.have.length(ROW_COUNT);
+    const { body: { errors } } = await request(app.listen()).post('/graphql').send({ query });
+    errors[0].message.should.containEql('没有找到分页参数');
+  });
+
+  it('应该返回所有记录', async () => {
+    const query = `query {
+      books(first: 100) {
+        nodes {
+          id
+        }
+      }
+    }`;
+    const { body: { data: { books: { nodes } } } } = await request(app.listen()).post('/graphql').send({ query });
+    should(nodes).not.empty();
+    nodes.should.have.length(ROW_COUNT);
   });
 
   it('应该返回ID>10的记录', async () => {
     const query = `query {
-      books(where: ["id", ">", "10"]) {
-        id
+      books(first: 100, where: ["id", ">", "10"]) {
+        nodes {
+          id
+        }
       }
     }`;
-    const { body: { data: { books } } } = await request(app.listen()).post('/graphql').send({ query });
-    should(books).not.empty();
-    books.should.have.length(5);
+    const { body: { data: { books: { nodes } } } } = await request(app.listen()).post('/graphql').send({ query });
+    should(nodes).not.empty();
+    nodes.should.have.length(5);
   });
 
   it('查询无结果应该返回错误', async () => {
     const query = `query {
-      books(where: ["id", ">", "100"]) {
-        id
+      books(first: 3, where: ["id", ">", "100"]) {
+        nodes {
+          id
+        }
       }
     }`;
-    const { body: { errors, data: { books } } } = await request(app.listen()).post('/graphql').send({ query });
-    should(books).be.null();
+    const { body: { errors } } = await request(app.listen()).post('/graphql').send({ query });
     errors.should.have.length(1);
     errors[0].message.message.should.eql('EmptyResponse');
   });

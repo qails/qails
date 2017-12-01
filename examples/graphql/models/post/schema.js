@@ -1,11 +1,11 @@
 export default `
-  type Post implements Model {
+  type Post implements Node {
     id: ID
   }
 
-  type Posts implements List {
+  type Posts implements Collection {
     pagination: Pagination
-    list: [Post]
+    nodes: [Post]
   }
 
   type Query {

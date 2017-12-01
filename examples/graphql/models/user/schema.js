@@ -1,18 +1,32 @@
+// {
+//   users(first:3) {
+//     nodes {
+//       id
+//       name
+//       posts(first:2) {
+//         nodes {
+//           id
+//         }
+//       }
+//     }
+//   }
+// }
+
 export default `
   input UserInput {
     name: String
   }
 
   # 用户模型类
-  type User implements Model {
+  type User implements Node {
     id: ID
     name: String
     posts(first: Int): Posts
   }
 
-  type Users implements List {
+  type Users implements Collection {
     pagination: Pagination
-    list: [User]
+    nodes: [User]
   }
 
   type Query {
