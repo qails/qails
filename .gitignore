@@ -8,7 +8,6 @@
 yarn-error.log
 npm-debug.log
 yarn.lock
-package-lock.json
 logs/
 node_modules/
 .tmp/
