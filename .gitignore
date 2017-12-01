@@ -2,6 +2,7 @@
 /.nyc_output
 /dist/
 /coverage/
+/examples/**/package-lock.json
 
 # 任何目录名或文件名为以下都忽略
 .DS_Store
