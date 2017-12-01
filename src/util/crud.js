@@ -4,7 +4,7 @@
  */
 
 /* eslint import/prefer-default-export: 0 */
-import { isObject, isFunction, isString } from 'util';
+import { isFunction, isString } from 'util';
 import { chunk, startsWith } from 'lodash';
 import { snake } from './magicCase';
 
@@ -52,7 +52,7 @@ export const readList = async (Model, query) => {
           model.query(...['where'].concat(item));
         }
       });
-    } else if (isObject(where)) {
+    } else {
       // where[name]=sales
       model.where(where);
     }
@@ -70,7 +70,7 @@ export const readList = async (Model, query) => {
           model.query(...['orWhere'].concat(item));
         }
       });
-    } else if (isObject(orWhere)) {
+    } else {
       model.query({ orWhere });
     }
   }
@@ -87,7 +87,7 @@ export const readList = async (Model, query) => {
           model.query(...['andWhere'].concat(item));
         }
       });
-    } else if (isObject(andWhere)) {
+    } else {
       model.query({ andWhere });
     }
   }
@@ -118,7 +118,7 @@ export const readList = async (Model, query) => {
 
     items = await model.fetchPage(fetchParams);
     result.pagination = items.pagination;
-    result.list = mask && isFunction(items.mask) ? items.mask(mask) : items.toJSON();
+    result.nodes = mask && isFunction(items.mask) ? items.mask(mask) : items.toJSON();
   } else {
     items = await model.fetchAll(fetchParams);
     result = mask && isFunction(items.mask) ? items.mask(mask) : items.toJSON();
