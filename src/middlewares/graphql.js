@@ -15,7 +15,7 @@
  */
 
 import Router from 'koa-router';
-import graphqlHTTP from 'koa-graphql';
+import graphqlHTTP from 'koa-graphql-fix';
 
 export default (options) => {
   // 设置中间件默认参数
