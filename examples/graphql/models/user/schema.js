@@ -3,6 +3,7 @@ export default `
     name: String
   }
 
+  # 用户模型类
   type User implements Model {
     id: ID
     name: String
@@ -15,13 +16,18 @@ export default `
   }
 
   type Query {
+    # 搜索用户列表
     users(withRelated: String, where: String, andWhere: String, orWhere: String, sort: String, page: Int, pageSize: Int, limit: Int, offset: Int, first: Int): Users
+    # 获取用户详情
     user(id: ID!, withRelated: String): User
   }
 
   type Mutation {
+    # 新增用户
     createUser(input: UserInput): User
+    # 修改用户
     updateUser(id: ID!, input: UserInput): User
+    # 删除用户
     deleteUser(id: ID!): Int
   }
 
