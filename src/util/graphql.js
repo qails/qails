@@ -8,11 +8,19 @@ import { GraphQLError } from 'graphql';
 import { readList, readItem, createItem, updateItem, deleteItem } from './crud';
 
 export const fetchList = async (model, query) => {
-  try {
-    const result = await readList(model, query);
-    return result;
-  } catch (e) {
-    throw new GraphQLError(e);
+  const params = 'page,pageSize,offset,limit,first';
+  const valid = params.split(',').some(
+    key => Object.keys(query).indexOf(key) >= 0
+  );
+  if (valid) {
+    try {
+      const result = await readList(model, query);
+      return result;
+    } catch (e) {
+      throw new GraphQLError(e);
+    }
+  } else {
+    throw new GraphQLError(`没有找到分页参数，请至少传递一个分页参数：${params}`);
   }
 };
 
