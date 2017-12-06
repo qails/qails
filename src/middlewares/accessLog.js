@@ -20,7 +20,9 @@ import FileStreamRotator from 'file-stream-rotator';
 import mkdirp from 'mkdirp';
 
 export default (fileStream, morganFormat, morganOptions) => {
-  const { root, filename, dateFormat, frequency, verbose } = {
+  const {
+    root, filename, dateFormat, frequency, verbose
+  } = {
     ...{
       root: resolve('logs'),
       filename: 'access__%DATE%.log',

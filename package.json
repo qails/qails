@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.0.3",
     "babel-preset-env": "^1.6.0",
     "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
@@ -45,9 +44,7 @@
     "bookshelf-paranoia": "^0.11.0",
     "bookshelf-uuid": "^1.0.0",
     "dotenv": "^4.0.0",
-    "eslint": "^4.11.0",
-    "eslint-config-qunar": "^1.2.1",
-    "eslint-plugin-import": "^2.7.0",
+    "eslint-config-qunar": "^2.0.0",
     "file-stream-rotator": "0.2.0",
     "graphql": "^0.11.2",
     "graphql-tools": "^2.11.0",

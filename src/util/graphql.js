@@ -9,9 +9,7 @@ import { readList, readItem, createItem, updateItem, deleteItem } from './crud';
 
 export const fetchList = async (model, query) => {
   const params = 'page,pageSize,offset,limit,first';
-  const valid = params.split(',').some(
-    key => Object.keys(query).indexOf(key) >= 0
-  );
+  const valid = params.split(',').some(key => Object.keys(query).indexOf(key) >= 0);
   if (valid) {
     try {
       const result = await readList(model, query);

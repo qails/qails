@@ -93,4 +93,4 @@ if (MODEL_MAGICCASE === 'true') {
 
 // 外部可以base.knex取到knex client
 export default base;
-export const Model = base.Model;
+export const { Model } = base;

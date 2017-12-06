@@ -10,8 +10,12 @@ import { snake } from './magicCase';
 
 export const readList = async (Model, query) => {
   const model = Model.forge();
-  const { embed, withRelated, mask, page, pageSize, first, limit, offset } = query;
-  let { where, andWhere, orWhere, sort } = query;
+  const {
+    embed, withRelated, mask, page, pageSize, first, limit, offset
+  } = query;
+  let {
+    where, andWhere, orWhere, sort
+  } = query;
   let fetchParams = { require: true };
   let result = {};
 
@@ -135,9 +139,9 @@ export const readItem = async (Model, id, query) => {
     fetchParams.withRelated = (embed || withRelated).split(',');
   }
 
-  const item = await model.query(
-    q => q.where({ [Model.prototype.idAttribute]: id })
-  ).fetch(fetchParams);
+  const item = await model
+    .query(q => q.where({ [Model.prototype.idAttribute]: id }))
+    .fetch(fetchParams);
 
   const result = mask ? item.mask(mask) : item.toJSON();
 

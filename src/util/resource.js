@@ -14,7 +14,9 @@ import { readList, readItem, createItem, updateItem, deleteItem } from './crud';
  * @class
  */
 export default class ResourceRouter extends Router {
-  methods = { create: false, read: false, update: false, destroy: false }
+  methods = {
+    create: false, read: false, update: false, destroy: false
+  }
 
   /**
    * @static

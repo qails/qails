@@ -31,7 +31,11 @@ export default (options) => {
       extensions: () => ({
         runTime: Date.now() - startTime
       }),
-      formatError: ({ message, path, locations, stack }) => ({ message, path, locations, stack }),
+      formatError: ({
+        message, path, locations, stack
+      }) => ({
+        message, path, locations, stack
+      }),
       ...defaultOptions
     };
   }

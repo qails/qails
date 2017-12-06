@@ -37,7 +37,7 @@ describe('plugin::modelbase', () => {
     let modelId;
     describe('新增', () => {
       it('通过校验时模型应该被存储', async () => {
-        const name = casual.name;
+        const { name } = casual;
         const Model = bookshelf.Model.extend(validateOptions);
         const model = await Model.create({ name });
         modelId = model.get('id');
@@ -59,7 +59,7 @@ describe('plugin::modelbase', () => {
 
     describe('修改', () => {
       it('通过校验时模型应该被存储', async () => {
-        const name = casual.name;
+        const { name } = casual;
         const Model = bookshelf.Model.extend(validateOptions);
         const model = await Model.update({ name }, { id: modelId });
         model.should.be.an.instanceof(Model);
@@ -81,7 +81,7 @@ describe('plugin::modelbase', () => {
 
   describe('create()', () => {
     it('应该创建一个新模型', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const Model = bookshelf.Model.extend(modelOptions);
       const model = await Model.create({ name });
       model.get('name').should.eql(name);
@@ -90,7 +90,7 @@ describe('plugin::modelbase', () => {
 
   describe('destroy()', () => {
     it('应该删除选中的模型', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const Model = bookshelf.Model.extend(modelOptions);
       const model = await Model.create({ name });
       const id = model.get('id');
@@ -134,7 +134,7 @@ describe('plugin::modelbase', () => {
   });
 
   describe('findOrCreate()', async () => {
-    const name = casual.name;
+    const { name } = casual;
     const Model = bookshelf.Model.extend(modelOptions);
     it('不存在的记录执行新增操作', async () => {
       const countBeforeInsert = await Model.count();
@@ -152,7 +152,7 @@ describe('plugin::modelbase', () => {
 
   describe('update()', () => {
     it('应该返回一个修改后的模型', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const Model = bookshelf.Model.extend(modelOptions);
       const model = await Model.findOne();
       const id = model.get('id');
@@ -163,7 +163,7 @@ describe('plugin::modelbase', () => {
     });
 
     it('当设置了require:false并且找不到记录时，应该返回undefined', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const id = -1;
       const Model = bookshelf.Model.extend(modelOptions);
       const model = await Model.update({ name }, { id, require: false });
@@ -173,7 +173,7 @@ describe('plugin::modelbase', () => {
 
   describe('upsert()', () => {
     it('应该更新一个已经存在的模型', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const newName = casual.name;
       name.should.not.eql(newName);
       const Model = bookshelf.Model.extend(modelOptions);
@@ -185,7 +185,7 @@ describe('plugin::modelbase', () => {
     });
 
     it('应该新增一个不存在的模型', async () => {
-      const name = casual.name;
+      const { name } = casual;
       const id = 100;
       const Model = bookshelf.Model.extend(modelOptions);
       try {
