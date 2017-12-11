@@ -8,7 +8,7 @@ import { isFunction, isString } from 'util';
 import { chunk, startsWith } from 'lodash';
 import { snake } from './magicCase';
 
-export const readList = async (Model, query) => {
+export const readList = async (Model, query, fetchOptions) => {
   const model = Model.forge();
   const {
     embed, withRelated, mask, page, pageSize, first, limit, offset
@@ -16,7 +16,7 @@ export const readList = async (Model, query) => {
   let {
     where, andWhere, orWhere, sort
   } = query;
-  let fetchParams = { require: true };
+  let fetchParams = { ...fetchOptions, require: true };
   let result = {};
 
   if (model.magicCase) {
@@ -130,10 +130,10 @@ export const readList = async (Model, query) => {
   return result;
 };
 
-export const readItem = async (Model, id, query) => {
+export const readItem = async (Model, id, query, fetchOptions) => {
   const model = Model.forge();
   const { embed, mask, withRelated } = query;
-  const fetchParams = { require: true };
+  const fetchParams = { ...fetchOptions, require: true };
 
   if (embed || withRelated) {
     fetchParams.withRelated = (embed || withRelated).split(',');
