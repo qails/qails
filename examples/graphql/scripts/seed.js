@@ -4,7 +4,7 @@
 
 /* eslint import/first: 0 */
 import '../dotenv';
-import { base } from 'qails';
+import { bookshelf } from 'qails';
 import { range } from 'lodash';
 import casual from 'casual';
 
@@ -13,7 +13,7 @@ const TABLE_USERS = 'users';
 const TABLE_POSTS = 'posts';
 
 const seed = async () => {
-  await base.knex.schema
+  await bookshelf.knex.schema
     .dropTableIfExists(TABLE_USERS)
     .createTable(TABLE_USERS, (table) => {
       table.increments();
@@ -25,13 +25,13 @@ const seed = async () => {
       table.integer('user_id');
     });
 
-  await base.knex(TABLE_USERS)
+  await bookshelf.knex(TABLE_USERS)
     .insert(range(1, ROW_COUNT + 1).map(item => ({
       id: item,
       name: casual.word
     })));
 
-  await base.knex(TABLE_POSTS)
+  await bookshelf.knex(TABLE_POSTS)
     .insert(range(1, ROW_COUNT + 1).map(item => ({
       user_id: item
     })));
