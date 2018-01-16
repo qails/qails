@@ -23,8 +23,15 @@ const {
   MODEL_UUID_TYPE = 'v4',
   MODEL_JSONCOLUMNS,
   MODEL_MAGICCASE,
-  MODEL_SOFTDELETE
+  MODEL_SOFTDELETE,
+  MYSQL_POOL_IDEL_TIMEOUT_MILLIS,
+  MYSQL_POOL_EVICTION_RUN_INTERVAL_MILLIS
 } = process.env;
+
+const pool = {
+  idleTimeoutMillis: MYSQL_POOL_IDEL_TIMEOUT_MILLIS,
+  evictionRunIntervalMillis: MYSQL_POOL_EVICTION_RUN_INTERVAL_MILLIS
+};
 
 const base = bookshelf(knex({
   client: 'mysql',
@@ -34,7 +41,8 @@ const base = bookshelf(knex({
     password: MYSQL_PASSWORD,
     database: MYSQL_DATABASE,
     port: MYSQL_PORT
-  }
+  },
+  pool
 }));
 
 
