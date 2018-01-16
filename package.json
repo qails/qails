@@ -1,6 +1,6 @@
 {
   "name": "qails",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "description": "an ORM and RESTful nodejs web framework based Koa2 like Ruby on Rails. ",
   "repository": "qails/qails",
   "main": "dist/index.js",
@@ -29,7 +29,7 @@
     "test": "mocha",
     "cover": "nyc npm test",
     "coveralls": "npm run cover && cat ./coverage/lcov.info | coveralls",
-    "pre-commit": "npm run lint && npm run test"
+    "pre-commit": "npm run lint"
   },
   "dependencies": {
     "babel-cli": "^6.26.0",
