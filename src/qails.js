@@ -24,7 +24,9 @@ const {
   CORS_ENABLE,
   CORS_ORIGIN,
   CORS_ALLOW_METHODS,
-  SESSION_ENABLE
+  SESSION_ENABLE,
+  JSON_LIMIT = '1mb',
+  FORM_LIMIT = '56kb'
 } = process.env;
 
 // 创建日志目录
@@ -62,7 +64,10 @@ export default class Qails {
     if (SESSION_ENABLE === 'true') {
       this.use(session({}, this.koa));
     }
-    this.use(bodyParser());
+    this.use(bodyParser({
+      json_limit: JSON_LIMIT,
+      form_limit: FORM_LIMIT
+    }));
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
 
     if (PUG_ENABLE === 'true') {
