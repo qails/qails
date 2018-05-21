@@ -65,8 +65,8 @@ export default class Qails {
       this.use(session({}, this.koa));
     }
     this.use(bodyParser({
-      json_limit: JSON_LIMIT,
-      form_limit: FORM_LIMIT
+      jsonLimit: JSON_LIMIT,
+      formLimit: FORM_LIMIT
     }));
     this.use(json({ pretty: JSON_PRETTY === 'true' }));
 
